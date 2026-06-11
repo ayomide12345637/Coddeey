@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Coddeey School Portal</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .section { display: none; }
+        .section.active { display: block; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 10px; }
+        
+        /* Profile frame styles - THICK VISIBLE FRAME */
+        .profile-wrapper {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .profile-frame {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            background: #1e293b;
+        }
+        .profile-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Custom frame container */
+        .custom-frame {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 40;
+            display: none;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        
+        /* Thick frame styles */
+        .thick-frame {
+            border-radius: 50%;
+            border: 8px solid #8b5cf6;
+            padding: 4px;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        
+        /* Live preview frame */
+        .live-preview {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .live-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
+
+<!-- LANDING PAGE -->
+<div id="landingPage" class="min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10 text-center">
+        <img src="https://i.imgur.com/wquDcTC.png" alt="Coddeey Logo" class="w-48 mx-auto mb-8">
+        <h1 class="text-4xl font-bold text-white mb-4">Welcome to Coddeey</h1>
+        <p class="text-slate-400 mb-10">Your coding journey starts here</p>
+        <button onclick="showRegistration()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-semibold text-lg mb-4 hover:scale-105 transition">First Timer</button>
+        <button onclick="showLogin()" class="w-full bg-white/10 border border-white/20 text-white py-4 rounded-2xl font-semibold text-lg hover:bg-white/20 transition">Student Already</button>
+    </div>
+</div>
+
+<!-- REGISTRATION FORM - COMPLETE -->
+<div id="registrationPage" class="hidden min-h-screen bg-slate-950 p-4 md:p-8 overflow-auto">
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between mb-6">
+            <img src="https://i.imgur.com/wquDcTC.png" class="w-40">
+            <button onclick="goBack()" class="text-blue-400 hover:text-white text-lg">← Back</button>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-2 text-white">Student Registration Form</h1>
+        <p class="text-slate-400 mb-6">Your password will be your SURNAME in CAPITAL LETTERS</p>
+
+        <form id="registerForm" class="space-y-8">
+            <!-- 1. Personal Information -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">1. Personal Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="regSurname" placeholder="Surname *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="text" id="regFirstName" placeholder="First Name *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="text" id="regMiddleName" placeholder="Middle Name" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <select id="regGender" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                        <option value="">Select Gender</option><option>Male</option><option>Female</option>
+                    </select>
+                    <input type="date" id="regDob" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="text" id="regNationality" placeholder="Nationality" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <input type="text" id="regState" placeholder="State of Residence" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <input type="text" id="regCity" placeholder="City/Town" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <textarea id="regAddress" placeholder="Home Address" rows="2" class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white"></textarea>
+                    <input type="url" id="regPhotoUrl" placeholder="Passport Photo URL (ImgBB link)" class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                </div>
+            </div>
+
+            <!-- 2. Contact Information -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">2. Contact Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="tel" id="regPhone" placeholder="Phone Number *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="tel" id="regAltPhone" placeholder="Alternative Phone" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <input type="email" id="regEmail" placeholder="Email Address *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="tel" id="regWhatsapp" placeholder="WhatsApp Number" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                </div>
+            </div>
+
+            <!-- 3. Educational Background -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">3. Educational Background</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <select id="regEducation" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                        <option>Highest Level of Education</option>
+                        <option>Secondary School</option><option>OND</option><option>HND</option>
+                        <option>Bachelor's Degree</option><option>Master's Degree</option><option>Other</option>
+                    </select>
+                    <input type="text" id="regSchool" placeholder="School/Institution Name" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <input type="text" id="regCourseStudy" placeholder="Course of Study" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                </div>
+            </div>
+
+            <!-- 4. Preferred Learning Mode -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">4. Preferred Learning Mode</h2>
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <label class="flex items-center justify-center gap-2 bg-slate-800 p-3 rounded-xl cursor-pointer"><input type="radio" name="learningMode" value="Live"> Live</label>
+                    <label class="flex items-center justify-center gap-2 bg-slate-800 p-3 rounded-xl cursor-pointer"><input type="radio" name="learningMode" value="Recorded"> Recorded</label>
+                    <label class="flex items-center justify-center gap-2 bg-slate-800 p-3 rounded-xl cursor-pointer"><input type="radio" name="learningMode" value="Both" checked> Both</label>
+                </div>
+                <select id="regSchedule" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <option>Preferred Class Schedule</option><option>Morning</option><option>Afternoon</option><option>Evening</option>
+                </select>
+            </div>
+
+            <!-- 5. Technical Background -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">5. Technical Background</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select id="regOwnLaptop" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                        <option>Yes</option><option>No</option>
+                    </select>
+                    <select id="regLaptopType" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                        <option>Windows</option><option>MacBook</option><option>Linux</option>
+                    </select>
+                    <select id="regInternet" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                        <option>Yes</option><option>No</option>
+                    </select>
+                    <select id="regProgLevel" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                        <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 6. Referral -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">6. Referral & Marketing</h2>
+                <select id="regHearAbout" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <option>How did you hear about us?</option>
+                    <option>Friends</option><option>WhatsApp</option><option>Facebook</option><option>TikTok</option>
+                    <option>Instagram</option><option>X (Twitter)</option><option>Google Search</option><option>YouTube</option>
+                </select>
+                <input type="text" id="regReferralCode" placeholder="Referral Code (if any)" class="mt-4 w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+            </div>
+
+            <!-- 7. Emergency Contact -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">7. Emergency Contact</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="regEmergencyName" placeholder="Emergency Contact Name" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <input type="text" id="regEmergencyRelation" placeholder="Relationship" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                    <input type="tel" id="regEmergencyPhone" placeholder="Emergency Phone" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
+                </div>
+            </div>
+
+            <!-- 8. Terms -->
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-purple-500">
+                <p class="text-sm text-slate-300 mb-4">We collect your information solely for student registration, communication, certification, and course administration.</p>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 text-white"><input type="checkbox" id="terms1" class="w-5 h-5 accent-purple-500" required> I confirm the information is accurate.</label>
+                    <label class="flex items-center gap-3 text-white"><input type="checkbox" id="terms2" class="w-5 h-5 accent-purple-500" required> I agree to Terms and Conditions.</label>
+                    <label class="flex items-center gap-3 text-white"><input type="checkbox" id="terms3" class="w-5 h-5 accent-purple-500" required> I consent to receive updates.</label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl hover:brightness-110 transition text-white">
+                Submit Registration & Generate COD
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="hidden min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10">
+        <img src="https://i.imgur.com/wquDcTC.png" class="w-40 mx-auto mb-8">
+        <h2 class="text-3xl font-bold text-white text-center mb-8">Student Login</h2>
+        <input type="text" id="loginCod" placeholder="COD Number (e.g., ADE/2024)" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
+        <input type="text" id="loginSurname" placeholder="Surname (CAPITAL LETTERS)" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white mb-6 focus:border-purple-500 outline-none">
+        <button onclick="doLogin()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-semibold text-lg mb-4">Login</button>
+        <button onclick="goBack()" class="w-full text-slate-400 hover:text-white">← Back</button>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed lg:relative w-72 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 h-screen overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-all duration-300 z-50">
+            <div class="p-6 text-center border-b border-white/10">
+                <img src="https://i.imgur.com/wquDcTC.png" class="w-32 mx-auto mb-4">
+                <!-- Profile frame with thick border -->
+                <div id="globalProfileFrame" class="profile-wrapper">
+                    <div class="profile-frame thick-frame" id="profileFrameDisplay">
+                        <img id="sidebarProfileImg" src="" alt="Profile">
+                    </div>
+                </div>
+                <p id="sidebarUserName" class="font-semibold text-white mt-3"></p>
+                <p id="sidebarUserCod" class="text-sm text-slate-400"></p>
+                <div class="mt-3 bg-purple-600/20 rounded-full px-4 py-2 inline-block">
+                    <span class="material-icons text-yellow-400 text-sm">paid</span>
+                    <span id="sidebarCoinsAmount" class="text-white font-bold ml-1">0</span>
+                </div>
+            </div>
+            <div class="p-4 space-y-1">
+                <button onclick="showSection('dashboard'); closeSidebar();" data-section="dashboard" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">home</span> Dashboard</button>
+                <button onclick="showSection('fees'); closeSidebar();" data-section="fees" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">payments</span> Fees</button>
+                <button onclick="showSection('courseform'); closeSidebar();" data-section="courseform" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">menu_book</span> Course Form</button>
+                <button onclick="showSection('level'); closeSidebar();" data-section="level" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">trending_up</span> Level</button>
+                <button onclick="showSection('referrals'); closeSidebar();" data-section="referrals" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">group</span> Referrals</button>
+                <button onclick="showSection('grades'); closeSidebar();" data-section="grades" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">grade</span> Grade</button>
+                <button onclick="showSection('messages'); closeSidebar();" data-section="messages" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">email</span> Message</button>
+                <button onclick="showSection('update'); closeSidebar();" data-section="update" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">notifications</span> Update</button>
+                <button onclick="showSection('leaderboard'); closeSidebar();" data-section="leaderboard" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">emoji_events</span> Leaderboard</button>
+                <button onclick="showSection('market'); closeSidebar();" data-section="market" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">store</span> Coddeey Market</button>
+                <button onclick="showSection('chat'); closeSidebar();" data-section="chat" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">chat</span> Global Chat</button>
+                <button onclick="showSection('edit'); closeSidebar();" data-section="edit" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-purple-600/20 hover:text-white transition flex items-center gap-3"><span class="material-icons">edit</span> Edit Frame</button>
+            </div>
+            <div class="p-4 border-t border-white/10 mt-4">
+                <button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/20 transition flex items-center gap-3"><span class="material-icons">logout</span> Logout</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+            <div class="bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-40">
+                <span class="material-icons text-2xl text-white lg:hidden cursor-pointer" onclick="toggleSidebar()">menu</span>
+                <div class="flex items-center gap-4">
+                    <span id="topUserName" class="text-white hidden sm:inline"></span>
+                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
+                        <img id="topProfileImg" src="" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <!-- Dashboard -->
+                <div id="dashboardSection" class="section active">
+                    <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-6 border border-white/10 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-1">Welcome back, <span id="welcomeName"></span>!</h2>
+                        <p id="dashboardCodText" class="text-slate-300"></p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 bg-slate-900/50 rounded-2xl p-6 border border-white/10 text-center">
+                            <div class="relative w-40 h-40 mx-auto mb-4">
+                                <svg class="w-40 h-40 transform -rotate-90">
+                                    <defs><linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
+                                    <circle cx="80" cy="80" r="72" stroke="#1e293b" stroke-width="10" fill="none"/>
+                                    <circle id="progressCircle" cx="80" cy="80" r="72" stroke="url(#progressGrad)" stroke-width="10" fill="none" stroke-dasharray="452" stroke-dashoffset="452" stroke-linecap="round"/>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span id="progressPercentText" class="text-3xl font-bold text-white">0%</span>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-white"><span class="material-icons text-yellow-400">paid</span> <span id="dashboardCoinsAmount">0</span> Coins</div>
+                        </div>
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                                <h3 class="text-lg font-semibold text-white mb-3">Your Referral Link</h3>
+                                <div class="flex gap-2">
+                                    <input type="text" id="referralLinkInput" readonly class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
+                                    <button onclick="copyReferralLink()" class="bg-purple-600 px-4 rounded-xl">Copy</button>
+                                </div>
+                                <p class="text-slate-400 text-sm mt-3">Referrals: <span id="referralCountDisplay">0</span> | Coins earned: <span id="referralCoinsEarned">0</span></p>
+                            </div>
+                            <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                                <h3 class="text-lg font-semibold text-white mb-3">🏆 Top 5 Leaderboard</h3>
+                                <div id="miniLeaderboardList" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fees -->
+                <div id="feesSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Fees Payment</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Form Fee</h3><p class="text-2xl text-purple-400">₦500</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Acceptance</h3><p class="text-2xl text-purple-400">₦1,000</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Tuition</h3><p class="text-2xl text-purple-400">₦1,000</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Total</h3><p class="text-2xl text-purple-400">₦2,500</p></div>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="payFee('Form Fee', 500)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Form (₦500)</button>
+                            <button onclick="payFee('Acceptance', 1000)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Acceptance (₦1,000)</button>
+                            <button onclick="payFee('Tuition', 1000)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Tuition (₦1,000)</button>
+                            <button onclick="payFee('All Fees', 2500)" class="bg-purple-600 px-5 py-2 rounded-xl">Pay All (₦2,500)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Form -->
+                <div id="courseformSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Course Registration</h2>
+                        <p class="text-slate-300 mb-4">Current Stage: <span id="currentStageText" class="text-purple-400 font-bold">1</span></p>
+                        <div id="coursesList" class="space-y-2 mb-4">
+                            <div class="bg-slate-800 rounded-xl p-3">📘 HTML & CSS Fundamentals</div>
+                            <div class="bg-slate-800 rounded-xl p-3">📘 JavaScript Basics</div>
+                            <div class="bg-slate-800 rounded-xl p-3">📘 Introduction to Programming</div>
+                        </div>
+                        <button onclick="alert('Registered for Stage ' + (currentUserData?.stage || 1))" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
+                    </div>
+                </div>
+
+                <!-- Level -->
+                <div id="levelSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10 text-center">
+                        <h2 class="text-xl font-bold text-white mb-4">Your Progress Journey</h2>
+                        <div class="relative w-56 h-56 mx-auto mb-4">
+                            <svg class="w-56 h-56 transform -rotate-90">
+                                <circle cx="112" cy="112" r="100" stroke="#1e293b" stroke-width="10" fill="none"/>
+                                <circle id="levelProgressCircle" cx="112" cy="112" r="100" stroke="url(#progressGrad)" stroke-width="10" fill="none" stroke-dasharray="628" stroke-dashoffset="628" stroke-linecap="round"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="levelPercentText" class="text-4xl font-bold text-white">0%</span>
+                                <span class="text-slate-400 text-sm">Overall Progress</span>
+                            </div>
+                        </div>
+                        <p class="text-slate-300">Stage <span id="userCurrentStage">1</span> of 11</p>
+                        <div class="mt-6 flex justify-center gap-2 flex-wrap" id="stageIndicators"></div>
+                    </div>
+                </div>
+
+                <!-- Referrals -->
+                <div id="referralsSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Referral Program</h2>
+                        <p class="text-slate-300 mb-4">Share your link and earn <span class="text-yellow-400">10 coins per referral</span></p>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="refLinkDisplayField" readonly class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
+                            <button onclick="copyRefLink()" class="bg-purple-600 px-4 rounded-xl">Copy</button>
+                        </div>
+                        <div class="bg-slate-800 rounded-xl p-4">
+                            <p class="text-white">Total Referrals: <span id="totalReferralsCount">0</span></p>
+                            <p class="text-yellow-400 mt-1">Coins Earned: <span id="referralCoinsTotal">0</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grades -->
+                <div id="gradesSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Your Grades</h2>
+                        <div id="assignmentsListContainer" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="messagesSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Direct Messages from Admin</h2>
+                        <div id="directMessagesContainer" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Update -->
+                <div id="updateSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Announcements</h2>
+                        <div id="broadcastMessagesContainer" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div id="leaderboardSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">🏆 Global Leaderboard</h2>
+                        <div id="fullLeaderboardContainer" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <!-- Market -->
+                <div id="marketSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Coddeey Market</h2>
+                        <div id="marketGridContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+
+                <!-- Chat -->
+                <div id="chatSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-1">Global Room Chat</h2>
+                        <p class="text-slate-400 text-sm mb-4">💰 1 coin per message</p>
+                        <div id="chatMessagesContainer" class="h-80 overflow-y-auto mb-4 space-y-2 bg-slate-800/50 rounded-xl p-3"></div>
+                        <div class="flex gap-2">
+                            <input type="text" id="chatInputField" placeholder="Type your message..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white">
+                            <button onclick="sendChatMessage()" class="bg-purple-600 px-5 rounded-xl">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Frame - WITH LIVE PREVIEW -->
+                <div id="editSection" class="section">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Edit Profile Frame</h2>
+                        <p class="text-slate-300 mb-4">Customize the border/frame around your profile picture using HTML/CSS</p>
+                        
+                        <!-- Live Preview Section -->
+                        <div class="bg-slate-800 rounded-xl p-6 mb-6 text-center">
+                            <h3 class="text-md font-semibold text-purple-400 mb-3">🔴 LIVE PREVIEW</h3>
+                            <div id="livePreviewContainer" class="profile-wrapper">
+                                <div id="livePreviewFrame" class="profile-frame thick-frame">
+                                    <img id="livePreviewImg" src="" alt="Preview">
+                                </div>
+                            </div>
+                            <p class="text-slate-400 text-xs mt-3">Your frame will update instantly as you type</p>
+                        </div>
+                        
+                        <!-- Code Editor -->
+                        <textarea id="frameEditorTextarea" rows="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white font-mono text-sm mb-4"></textarea>
+                        
+                        <!-- Save Button -->
+                        <button onclick="saveProfileFrame()" class="bg-purple-600 px-6 py-2 rounded-xl">Save Frame</button>
+                        
+                        <!-- Info -->
+                        <div class="mt-4 p-3 bg-slate-800/50 rounded-xl">
+                            <p class="text-slate-400 text-xs">💡 Tip: Use <code class="text-purple-400">{{photo}}</code> as placeholder for your profile image. Example:</p>
+                            <pre class="text-xs text-slate-400 mt-2 bg-slate-900 p-2 rounded overflow-x-auto">&lt;div style="border: 8px solid #8b5cf6; border-radius: 50%; padding: 4px;"&gt;
+  &lt;img src="{{photo}}" style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;"&gt;
+&lt;/div&gt;</pre>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <h3 class="text-md font-bold text-white mb-2">🔒 Locked Stages (Coming Soon)</h3>
+                            <div class="grid grid-cols-10 gap-1" id="lockedStagesGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyA1SkCz3LyXE2yAYwuobWKISy736zNkcCQ",
+        authDomain: "coddeey-c63de.firebaseapp.com",
+        projectId: "coddeey-c63de",
+        storageBucket: "coddeey-c63de.firebasestorage.app",
+        messagingSenderId: "945128256248",
+        appId: "1:945128256248:web:cf0b22d442ef2c496e010d"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    let currentUserData = null;
+    let livePreviewTimeout = null;
+
+    // Navigation
+    function goBack() {
+        document.getElementById('landingPage').classList.remove('hidden');
+        document.getElementById('registrationPage').classList.add('hidden');
+        document.getElementById('loginPage').classList.add('hidden');
+    }
+
+    function showRegistration() {
+        document.getElementById('landingPage').classList.add('hidden');
+        document.getElementById('registrationPage').classList.remove('hidden');
+        document.getElementById('loginPage').classList.add('hidden');
+    }
+
+    function showLogin() {
+        document.getElementById('landingPage').classList.add('hidden');
+        document.getElementById('registrationPage').classList.add('hidden');
+        document.getElementById('loginPage').classList.remove('hidden');
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+    
+    function closeSidebar() {
+        if (window.innerWidth < 1024) {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+    }
+
+    // Registration
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const surname = document.getElementById('regSurname').value;
+        const firstName = document.getElementById('regFirstName').value;
+        const middleName = document.getElementById('regMiddleName').value || "";
+        const email = document.getElementById('regEmail').value;
+        const password = surname.toUpperCase();
+        const dob = document.getElementById('regDob').value;
+        const year = dob ? dob.slice(-4) : "2024";
+        
+        // Generate COD: First 3 letters of First Name + First letter of Surname + / + Year
+        const codFirstName = firstName.slice(0, 3).toUpperCase();
+        const codSurname = surname[0].toUpperCase();
+        const cod = `${codFirstName}${codSurname}/${year}`;
+        const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
+        
+        try {
+            const userCred = await auth.createUserWithEmailAndPassword(email, password);
+            
+            await db.collection('users').doc(userCred.user.uid).set({
+                uid: userCred.user.uid,
+                surname: surname,
+                firstName: firstName,
+                middleName: middleName,
+                fullName: `${surname} ${firstName} ${middleName}`.trim(),
+                email: email,
+                cod: cod,
+                referralCode: referralCode,
+                photoUrl: document.getElementById('regPhotoUrl').value,
+                phone: document.getElementById('regPhone').value,
+                gender: document.getElementById('regGender').value,
+                dob: dob,
+                stage: 1,
+                progress: 0,
+                coins: 10,
+                referralsCount: 0,
+                paidForm: false,
+                paidAcceptance: false,
+                paidTuition: false,
+                fullPayment: false,
+                assignments: [],
+                suspended: false,
+                frameCode: '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>',
+                createdAt: new Date()
+            });
+            
+            await auth.signOut();
+            alert(`✅ Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
+            showLogin();
+        } catch(error) {
+            alert("❌ Registration Error: " + error.message);
+        }
+    });
+
+    // Login
+    async function doLogin() {
+        const cod = document.getElementById('loginCod').value.trim().toUpperCase();
+        const surname = document.getElementById('loginSurname').value.trim().toUpperCase();
+        
+        try {
+            const snapshot = await db.collection('users').where('cod', '==', cod).get();
+            if (snapshot.empty) throw new Error("COD not found");
+            
+            const userData = snapshot.docs[0].data();
+            if (userData.surname.toUpperCase() !== surname) throw new Error("Invalid surname");
+            
+            await auth.signInWithEmailAndPassword(userData.email, userData.surname.toUpperCase());
+        } catch(error) {
+            alert("❌ Login failed: " + error.message);
+        }
+    }
+
+    function payFee(item, amount) {
+        if (!currentUserData) return;
+        const msg = `I want to pay: ${item} for ₦${amount}. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
+        window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function copyReferralLink() {
+        const input = document.getElementById('referralLinkInput');
+        input.select();
+        document.execCommand('copy');
+        alert('✅ Referral link copied!');
+    }
+    
+    function copyRefLink() {
+        const input = document.getElementById('refLinkDisplayField');
+        input.select();
+        document.execCommand('copy');
+        alert('✅ Referral link copied!');
+    }
+
+    // Live Preview for Frame Editor
+    function updateLivePreview() {
+        const frameCode = document.getElementById('frameEditorTextarea').value;
+        const photoUrl = currentUserData?.photoUrl || 'https://via.placeholder.com/150';
+        
+        let previewHtml = frameCode;
+        if (previewHtml && previewHtml.includes('{{photo}}')) {
+            previewHtml = previewHtml.replace(/{{photo}}/g, photoUrl);
+        } else if (previewHtml) {
+            previewHtml = previewHtml;
+        } else {
+            previewHtml = `<div class="thick-frame"><img src="${photoUrl}" class="w-full h-full rounded-full object-cover"></div>`;
+        }
+        
+        const previewContainer = document.getElementById('livePreviewFrame');
+        if (previewContainer) {
+            previewContainer.innerHTML = previewHtml;
+            // Also ensure the image is properly sized
+            const img = previewContainer.querySelector('img');
+            if (img) {
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '50%';
+            }
+        }
+    }
+    
+    // Save Frame
+    async function saveProfileFrame() {
+        const frameCode = document.getElementById('frameEditorTextarea').value;
+        if (!frameCode) {
+            alert('Please enter some HTML/CSS for your frame');
+            return;
+        }
+        
+        try {
+            await db.collection('users').doc(auth.currentUser.uid).update({ 
+                frameCode: frameCode 
+            });
+            alert('✅ Frame saved successfully!');
+            await loadUserData();
+        } catch(error) {
+            alert('❌ Error saving frame: ' + error.message);
+        }
+    }
+
+    // Load User Data
+    async function loadUserData() {
+        if (!auth.currentUser) return;
+        const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+        if (doc.exists) {
+            currentUserData = doc.data();
+            if (currentUserData.suspended) {
+                alert('⚠️ Account suspended. Contact admin.');
+                logout();
+                return;
+            }
+            updateUI();
+        }
+    }
+
+    // Apply frame to all profile pictures
+    function applyFrameToProfile() {
+        const frameCode = currentUserData?.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
+        const photoUrl = currentUserData?.photoUrl || 'https://via.placeholder.com/150';
+        
+        const processedFrame = frameCode.replace(/{{photo}}/g, photoUrl);
+        
+        // Update sidebar profile
+        const profileDisplay = document.getElementById('profileFrameDisplay');
+        if (profileDisplay) {
+            profileDisplay.innerHTML = processedFrame;
+        }
+        
+        // Update live preview if on edit page
+        const livePreview = document.getElementById('livePreviewFrame');
+        if (livePreview && document.getElementById('editSection').classList.contains('active')) {
+            const previewHtml = frameCode.replace(/{{photo}}/g, photoUrl);
+            livePreview.innerHTML = previewHtml;
+            const img = livePreview.querySelector('img');
+            if (img) {
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '50%';
+            }
+        }
+    }
+
+    function updateUI() {
+        if (!currentUserData) return;
+        
+        // Calculate progress (simple for now)
+        const progress = currentUserData.progress || 0;
+        const circumference = 452;
+        const offset = circumference - (progress / 100) * circumference;
+        
+        document.getElementById('progressCircle')?.setAttribute('stroke-dashoffset', offset);
+        document.getElementById('levelProgressCircle')?.setAttribute('stroke-dashoffset', offset);
+        document.getElementById('progressPercentText').innerText = Math.round(progress) + '%';
+        document.getElementById('levelPercentText').innerText = Math.round(progress) + '%';
+        document.getElementById('dashboardCoinsAmount').innerText = currentUserData.coins || 0;
+        document.getElementById('sidebarCoinsAmount').innerText = currentUserData.coins || 0;
+        document.getElementById('welcomeName').innerText = currentUserData.firstName;
+        document.getElementById('dashboardCodText').innerHTML = '📛 ' + currentUserData.cod;
+        document.getElementById('sidebarUserName').innerText = currentUserData.surname + ' ' + currentUserData.firstName;
+        document.getElementById('sidebarUserCod').innerText = currentUserData.cod;
+        document.getElementById('topUserName').innerText = currentUserData.firstName;
+        document.getElementById('userCurrentStage').innerText = currentUserData.stage || 1;
+        document.getElementById('currentStageText').innerText = currentUserData.stage || 1;
+        
+        const baseUrl = window.location.origin + window.location.pathname;
+        const referralLink = `${baseUrl}?ref=${currentUserData.referralCode}`;
+        document.getElementById('referralLinkInput').value = referralLink;
+        document.getElementById('refLinkDisplayField').value = referralLink;
+        document.getElementById('referralCountDisplay').innerText = currentUserData.referralsCount || 0;
+        document.getElementById('totalReferralsCount').innerText = currentUserData.referralsCount || 0;
+        const refCoins = (currentUserData.referralsCount || 0) * 10;
+        document.getElementById('referralCoinsEarned').innerText = refCoins;
+        document.getElementById('referralCoinsTotal').innerText = refCoins;
+        
+        // Top profile image
+        const topImg = document.getElementById('topProfileImg');
+        if (topImg) topImg.src = currentUserData.photoUrl || 'https://via.placeholder.com/50';
+        
+        // Apply custom frame
+        applyFrameToProfile();
+        
+        // Set frame editor value
+        const frameEditor = document.getElementById('frameEditorTextarea');
+        if (frameEditor && !frameEditor.value) {
+            frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
+        }
+        
+        loadGrades();
+        loadBroadcastMessages();
+        loadMarketProducts();
+    }
+
+    async function loadGrades() {
+        const assignments = currentUserData?.assignments || [];
+        let html = '';
+        assignments.forEach(a => {
+            let grade = 'F';
+            if (a.score >= 75) grade = 'A';
+            else if (a.score >= 60) grade = 'B';
+            else if (a.score >= 40) grade = 'C';
+            html += `<div class="bg-slate-800 rounded-xl p-3 flex justify-between items-center">
+                        <div><span class="font-bold text-white">${a.title}</span><p class="text-slate-400 text-xs">Score: ${a.score}% (${grade})</p></div>
+                        <div class="text-yellow-400 text-sm">+${a.coinsEarned} 🪙</div>
+                    </div>`;
+        });
+        document.getElementById('assignmentsListContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No assignments yet</p>';
+    }
+
+    async function loadMiniLeaderboard() {
+        const snapshot = await db.collection('users').orderBy('progress', 'desc').limit(5).get();
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            html += `<div class="flex justify-between items-center p-2 bg-slate-800 rounded-xl">
+                        <span class="text-white text-sm">${data.firstName || 'User'}</span>
+                        <span class="text-purple-400 text-sm font-bold">${Math.round(data.progress || 0)}%</span>
+                    </div>`;
+        });
+        document.getElementById('miniLeaderboardList').innerHTML = html || '<p class="text-slate-400 text-center py-2">No users yet</p>';
+    }
+
+    async function loadFullLeaderboard() {
+        const snapshot = await db.collection('users').orderBy('progress', 'desc').get();
+        let rank = 1;
+        let html = '';
+        for (const doc of snapshot.docs) {
+            const data = doc.data();
+            html += `<div class="flex justify-between items-center p-2 bg-slate-800 rounded-xl">
+                        <div><span class="text-purple-400 text-sm font-bold">#${rank++}</span> <span class="text-white text-sm">${data.firstName || 'User'}</span></div>
+                        <div class="text-sm"><span class="text-yellow-400">💰 ${data.coins || 0}</span> <span class="text-purple-400 ml-2">${Math.round(data.progress || 0)}%</span></div>
+                    </div>`;
+        }
+        document.getElementById('fullLeaderboardContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No users yet</p>';
+    }
+
+    async function loadChatMessages() {
+        const snapshot = await db.collection('chatMessages').orderBy('timestamp', 'desc').limit(100).get();
+        let html = '';
+        const messages = [];
+        snapshot.forEach(doc => messages.push(doc.data()));
+        messages.reverse().forEach(msg => {
+            const time = msg.timestamp?.toDate ? new Date(msg.timestamp.toDate()).toLocaleTimeString() : '';
+            html += `<div class="bg-slate-800 rounded-xl p-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${msg.photoUrl || 'https://via.placeholder.com/24'}" class="w-6 h-6 rounded-full">
+                            <span class="font-bold text-purple-400 text-sm">${msg.senderName}</span>
+                            <span class="text-slate-500 text-xs">${time}</span>
+                        </div>
+                        <p class="text-white text-sm mt-1">${msg.text}</p>
+                    </div>`;
+        });
+        document.getElementById('chatMessagesContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No messages yet</p>';
+    }
+
+    async function sendChatMessage() {
+        const input = document.getElementById('chatInputField');
+        const text = input.value.trim();
+        if (!text) return;
+        if (!currentUserData || (currentUserData.coins || 0) < 1) {
+            alert("❌ Insufficient coins! You need at least 1 coin to send a message.");
+            return;
+        }
+        
+        try {
+            await db.collection('chatMessages').add({
+                senderId: auth.currentUser.uid,
+                senderName: currentUserData.firstName,
+                photoUrl: currentUserData.photoUrl,
+                text: text,
+                timestamp: new Date()
+            });
+            
+            await db.collection('users').doc(auth.currentUser.uid).update({
+                coins: firebase.firestore.FieldValue.increment(-1)
+            });
+            
+            input.value = '';
+            await loadUserData();
+            await loadChatMessages();
+        } catch(error) {
+            console.error("Chat error:", error);
+            alert("Error sending message: " + error.message);
+        }
+    }
+
+    async function loadBroadcastMessages() {
+        const snapshot = await db.collection('broadcastMessages').orderBy('timestamp', 'desc').get();
+        let html = '';
+        snapshot.forEach(doc => {
+            const msg = doc.data();
+            const time = msg.timestamp?.toDate ? new Date(msg.timestamp.toDate()).toLocaleString() : '';
+            html += `<div class="bg-slate-800 rounded-xl p-3">
+                        <small class="text-slate-400 text-xs">📢 ${time}</small>
+                        <p class="text-white text-sm mt-1">${msg.text}</p>
+                    </div>`;
+        });
+        document.getElementById('broadcastMessagesContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No announcements yet</p>';
+        document.getElementById('directMessagesContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No messages yet</p>';
+    }
+
+    async function loadMarketProducts() {
+        const snapshot = await db.collection('products').get();
+        let html = '';
+        snapshot.forEach(doc => {
+            const p = doc.data();
+            html += `<div class="bg-slate-800 rounded-xl p-4">
+                        <img src="${p.imageUrl}" class="w-full h-32 object-cover rounded-lg mb-3">
+                        <h3 class="font-bold text-white">${p.name}</h3>
+                        <p class="text-slate-400 text-xs">${p.description}</p>
+                        <div class="text-xl font-bold text-purple-400 my-2">₦${p.price}</div>
+                        <button onclick="window.open('https://wa.me/2348167914665?text=I want to buy ${p.name} for ₦${p.price}. My COD: ${currentUserData?.cod}', '_blank')" class="w-full bg-purple-600 py-2 rounded-lg text-sm">Buy Now</button>
+                    </div>`;
+        });
+        document.getElementById('marketGridContainer').innerHTML = html || '<p class="text-slate-400 text-center py-8 col-span-3">No products yet</p>';
+    }
+
+    function showSection(section) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(section + 'Section').classList.add('active');
+        
+        document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('bg-purple-600/20', 'text-white'));
+        document.querySelector(`[data-section="${section}"]`)?.classList.add('bg-purple-600/20', 'text-white');
+        
+        if (section === 'leaderboard') loadFullLeaderboard();
+        if (section === 'chat') loadChatMessages();
+        if (section === 'update') loadBroadcastMessages();
+        if (section === 'messages') loadBroadcastMessages();
+        if (section === 'market') loadMarketProducts();
+        if (section === 'edit') {
+            // Refresh frame editor and preview
+            const frameEditor = document.getElementById('frameEditorTextarea');
+            if (frameEditor && currentUserData) {
+                frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
+                updateLivePreview();
+            }
+        }
+    }
+
+    function logout() {
+        auth.signOut();
+        location.reload();
+    }
+
+    // Attach live preview listener
+    document.addEventListener('DOMContentLoaded', () => {
+        const frameEditor = document.getElementById('frameEditorTextarea');
+        if (frameEditor) {
+            frameEditor.addEventListener('input', function() {
+                if (livePreviewTimeout) clearTimeout(livePreviewTimeout);
+                livePreviewTimeout = setTimeout(updateLivePreview, 300);
+            });
+        }
+    });
+
+    // Auth State Listener
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('registrationPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            await loadUserData();
+            await loadMiniLeaderboard();
+            showSection('dashboard');
+        } else {
+            document.getElementById('mainApp').classList.add('hidden');
+            goBack();
+        }
+    });
+
+    // Initialize stage indicators
+    for (let i = 1; i <= 11; i++) {
+        const div = document.createElement('div');
+        div.className = i === 1 ? 'bg-purple-600 rounded-lg p-2 w-10 text-center text-sm font-bold' : 'bg-slate-800 rounded-lg p-2 w-10 text-center text-sm text-slate-600';
+        div.innerText = i;
+        document.getElementById('stageIndicators').appendChild(div);
+    }
+    
+    // Initialize locked stages grid
+    for (let i = 0; i < 10; i++) {
+        const grid = document.getElementById('lockedStagesGrid');
+        if (grid) {
+            grid.innerHTML += '<div class="bg-slate-800 rounded-lg p-2 text-center text-slate-600"><span class="material-icons text-sm">lock</span></div>';
+        }
+    }
+</script>
+</body>
+</html>
