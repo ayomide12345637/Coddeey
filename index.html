@@ -108,6 +108,70 @@
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
 
+<!-- REFERRAL INFO PAGE - ADDED -->
+<div id="referralInfoPage" class="hidden min-h-screen">
+    <div class="container mx-auto px-4 py-16 max-w-5xl">
+        <div class="text-center mb-12">
+            <img src="https://i.imgur.com/wquDcTC.png" alt="Coddeey Logo" class="w-48 mx-auto mb-8">
+            <h1 class="text-5xl font-bold text-white mb-4">Start Your Coding Journey</h1>
+            <p class="text-xl text-slate-300">Learn to code from scratch with expert guidance</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
+                <h2 class="text-2xl font-bold text-white mb-4">📚 What You'll Learn</h2>
+                <ul class="space-y-3 text-slate-300">
+                    <li>✓ HTML & CSS Fundamentals</li>
+                    <li>✓ JavaScript & React</li>
+                    <li>✓ Backend Development (Node.js)</li>
+                    <li>✓ Database Management</li>
+                    <li>✓ Real-world Projects</li>
+                </ul>
+            </div>
+            <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
+                <h2 class="text-2xl font-bold text-white mb-4">🎁 What You Get</h2>
+                <ul class="space-y-3 text-slate-300">
+                    <li>✓ Live Classes & Recordings</li>
+                    <li>✓ Weekly Assignments with Feedback</li>
+                    <li>✓ Certificate on Completion</li>
+                    <li>✓ 24/7 Community Support</li>
+                    <li>✓ Internship Opportunities</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-purple-600/20 rounded-2xl p-6 text-center border border-purple-500">
+                <div class="text-3xl font-bold text-purple-400 mb-2">70%+</div>
+                <p class="text-white">Graduate with 70%+ → Get paid business opportunities</p>
+            </div>
+            <div class="bg-blue-600/20 rounded-2xl p-6 text-center border border-blue-500">
+                <div class="text-3xl font-bold text-blue-400 mb-2">Top Student</div>
+                <p class="text-white">Highest scorer → Recruited to Coddeey company</p>
+            </div>
+            <div class="bg-green-600/20 rounded-2xl p-6 text-center border border-green-500">
+                <div class="text-3xl font-bold text-green-400 mb-2">Stage 10+</div>
+                <p class="text-white">Start earning monthly income</p>
+            </div>
+        </div>
+
+        <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10 text-center mb-8">
+            <h2 class="text-2xl font-bold text-white mb-4">Ready to Get Started?</h2>
+            <p class="text-slate-300 mb-6">Enter your name and email to get the registration link</p>
+            
+            <div class="max-w-md mx-auto">
+                <input type="text" id="refFullName" placeholder="Full Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4">
+                <input type="email" id="refEmail" placeholder="Email Address" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4">
+                <button onclick="saveReferralInfo()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg">Continue to Student Portal →</button>
+            </div>
+        </div>
+
+        <div class="text-center text-slate-400 text-sm">
+            <p>© 2024 Coddeey School of Programming. Learn. Build. Grow.</p>
+        </div>
+    </div>
+</div>
+
 <!-- LANDING PAGE -->
 <div id="landingPage" class="min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10 text-center">
@@ -527,23 +591,156 @@
     let currentUserData = null;
     let livePreviewTimeout = null;
 
+    // ========== REFERRAL SYSTEM - ADDED ==========
+    // Check for referral code in URL
+    function checkForReferral() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        
+        if (refCode && refCode.length > 0) {
+            // Show referral info page instead of normal landing
+            document.getElementById('referralInfoPage').classList.remove('hidden');
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('registrationPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            
+            // Store referral code for later use
+            localStorage.setItem('pendingReferralCode', refCode);
+        } else {
+            // Check if there's pending referral data from a previous visit
+            const savedRefCode = localStorage.getItem('pendingReferralCode');
+            if (savedRefCode) {
+                checkForSavedReferralData(savedRefCode);
+            }
+        }
+    }
+    
+    async function saveReferralInfo() {
+        const fullName = document.getElementById('refFullName').value;
+        const email = document.getElementById('refEmail').value;
+        const refCode = localStorage.getItem('pendingReferralCode');
+        
+        if (!fullName || !email) {
+            alert('Please enter your name and email');
+            return;
+        }
+        
+        // Parse name into surname and first name
+        const nameParts = fullName.trim().split(' ');
+        const surname = nameParts[0] || '';
+        const firstName = nameParts.slice(1).join(' ') || '';
+        
+        // Save to Firestore referrals collection
+        try {
+            await db.collection('referrals').add({
+                fullName: fullName,
+                surname: surname,
+                firstName: firstName,
+                email: email,
+                referralCode: refCode,
+                registered: false,
+                createdAt: new Date()
+            });
+            
+            // Store for auto-fill during registration
+            localStorage.setItem('pendingReferralData', JSON.stringify({
+                surname: surname,
+                firstName: firstName,
+                email: email,
+                referralCode: refCode
+            }));
+            
+            alert('Information saved! You will now be redirected to the student portal.');
+            
+            // Redirect to normal portal (without ?ref)
+            window.location.href = window.location.pathname;
+        } catch(error) {
+            console.error("Error saving referral:", error);
+            alert("Error saving your information. Please try again.");
+        }
+    }
+    
+    async function checkForSavedReferralData(refCode) {
+        const savedData = localStorage.getItem('pendingReferralData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            if (data.referralCode === refCode) {
+                window.pendingReferralData = data;
+                // Check if registration form is open
+                setTimeout(() => {
+                    if (!document.getElementById('registrationPage').classList.contains('hidden')) {
+                        showReferralAutoFillPopup();
+                    }
+                }, 500);
+            }
+        }
+    }
+    
+    function showReferralAutoFillPopup() {
+        if (!window.pendingReferralData) return;
+        
+        const modalHtml = `
+            <div id="referralModal" class="modal">
+                <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500 text-center">
+                    <div class="text-4xl mb-4">👋</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Welcome back!</h3>
+                    <p class="text-slate-300 mb-4">We found your referral information:</p>
+                    <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-left">
+                        <p class="text-white"><strong>Name:</strong> ${window.pendingReferralData.surname} ${window.pendingReferralData.firstName}</p>
+                        <p class="text-white"><strong>Email:</strong> ${window.pendingReferralData.email}</p>
+                    </div>
+                    <p class="text-slate-300 mb-6">Is this you?</p>
+                    <div class="flex gap-4">
+                        <button onclick="autoFillRegistrationForm()" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold">Yes, that's me</button>
+                        <button onclick="closeReferralModal()" class="flex-1 bg-red-600 py-3 rounded-2xl font-bold">No, continue typing</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    window.autoFillRegistrationForm = function() {
+        if (window.pendingReferralData) {
+            document.getElementById('regSurname').value = window.pendingReferralData.surname || '';
+            document.getElementById('regFirstName').value = window.pendingReferralData.firstName || '';
+            document.getElementById('regEmail').value = window.pendingReferralData.email || '';
+        }
+        closeReferralModal();
+    };
+    
+    function closeReferralModal() {
+        const modal = document.getElementById('referralModal');
+        if (modal) modal.remove();
+    }
+    // ========== END REFERRAL SYSTEM ==========
+
     // Navigation
     function goBack() {
         document.getElementById('landingPage').classList.remove('hidden');
         document.getElementById('registrationPage').classList.add('hidden');
         document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('referralInfoPage').classList.add('hidden');
     }
 
     function showRegistration() {
         document.getElementById('landingPage').classList.add('hidden');
         document.getElementById('registrationPage').classList.remove('hidden');
         document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('referralInfoPage').classList.add('hidden');
+        // Check for pending referral data after opening registration
+        if (window.pendingReferralData) {
+            setTimeout(showReferralAutoFillPopup, 300);
+        }
     }
 
     function showLogin() {
         document.getElementById('landingPage').classList.add('hidden');
         document.getElementById('registrationPage').classList.add('hidden');
         document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('referralInfoPage').classList.add('hidden');
     }
 
     function toggleSidebar() {
@@ -576,6 +773,19 @@
         const cod = `${codFirstName}${codSurname}/${year}`;
         const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
         
+        // Check for referral code
+        let referrerId = null;
+        const enteredReferralCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
+        const pendingRefCode = localStorage.getItem('pendingReferralCode');
+        
+        if (enteredReferralCode) {
+            const referrerQuery = await db.collection('users').where('referralCode', '==', enteredReferralCode).get();
+            if (!referrerQuery.empty) referrerId = referrerQuery.docs[0].id;
+        } else if (pendingRefCode) {
+            const referrerQuery = await db.collection('users').where('referralCode', '==', pendingRefCode).get();
+            if (!referrerQuery.empty) referrerId = referrerQuery.docs[0].id;
+        }
+        
         try {
             const userCred = await auth.createUserWithEmailAndPassword(email, password);
             
@@ -588,6 +798,8 @@
                 email: email,
                 cod: cod,
                 referralCode: referralCode,
+                referredBy: referrerId,
+                referralRewarded: false,
                 photoUrl: document.getElementById('regPhotoUrl').value,
                 phone: document.getElementById('regPhone').value,
                 gender: document.getElementById('regGender').value,
@@ -605,6 +817,10 @@
                 frameCode: '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>',
                 createdAt: new Date()
             });
+            
+            // Clear referral data
+            localStorage.removeItem('pendingReferralCode');
+            localStorage.removeItem('pendingReferralData');
             
             await auth.signOut();
             alert(`✅ Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
@@ -960,13 +1176,15 @@
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('registrationPage').classList.add('hidden');
             document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('referralInfoPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             await loadUserData();
             await loadMiniLeaderboard();
             showSection('dashboard');
         } else {
             document.getElementById('mainApp').classList.add('hidden');
-            goBack();
+            // Show normal landing or referral page based on URL
+            checkForReferral();
         }
     });
 
