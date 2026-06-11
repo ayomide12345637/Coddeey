@@ -41,12 +41,12 @@
             object-fit: cover;
         }
         
-        .custom-frame {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .thick-frame {
+            border-radius: 50%;
+            border: 8px solid #8b5cf6;
+            padding: 4px;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
         
         .sidebar-overlay {
@@ -76,99 +76,10 @@
             justify-content: center;
             backdrop-filter: blur(8px);
         }
-        
-        .thick-frame {
-            border-radius: 50%;
-            border: 8px solid #8b5cf6;
-            padding: 4px;
-            background: linear-gradient(135deg, #3b82f6, #a855f7);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-        }
-        
-        .live-preview {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .live-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
 
-<!-- REFERRAL INFO PAGE -->
-<div id="referralInfoPage" class="hidden min-h-screen">
-    <div class="container mx-auto px-4 py-16 max-w-5xl">
-        <div class="text-center mb-12">
-            <img src="https://i.imgur.com/wquDcTC.png" alt="Coddeey Logo" class="w-48 mx-auto mb-8">
-            <h1 class="text-5xl font-bold text-white mb-4">Start Your Coding Journey</h1>
-            <p class="text-xl text-slate-300">Learn to code from scratch with expert guidance</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-            <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
-                <h2 class="text-2xl font-bold text-white mb-4">What You'll Learn</h2>
-                <ul class="space-y-3 text-slate-300">
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> HTML & CSS Fundamentals</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> JavaScript & React</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Backend Development (Node.js)</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Database Management</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Real-world Projects</li>
-                </ul>
-            </div>
-            <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
-                <h2 class="text-2xl font-bold text-white mb-4">What You Get</h2>
-                <ul class="space-y-3 text-slate-300">
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Live Classes & Recordings</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Weekly Assignments with Feedback</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Certificate on Completion</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> 24/7 Community Support</li>
-                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Internship Opportunities</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-purple-600/20 rounded-2xl p-6 text-center border border-purple-500">
-                <div class="text-3xl font-bold text-purple-400 mb-2">70%+</div>
-                <p class="text-white">Graduate with 70%+ → Get paid business opportunities</p>
-            </div>
-            <div class="bg-blue-600/20 rounded-2xl p-6 text-center border border-blue-500">
-                <div class="text-3xl font-bold text-blue-400 mb-2">Top Student</div>
-                <p class="text-white">Highest scorer → Recruited to Coddeey company</p>
-            </div>
-            <div class="bg-green-600/20 rounded-2xl p-6 text-center border border-green-500">
-                <div class="text-3xl font-bold text-green-400 mb-2">Stage 10+</div>
-                <p class="text-white">Start earning monthly income</p>
-            </div>
-        </div>
-
-        <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10 text-center mb-8">
-            <h2 class="text-2xl font-bold text-white mb-4">Ready to Get Started?</h2>
-            <p class="text-slate-300 mb-6">Enter your name and email to get the registration link</p>
-            
-            <div class="max-w-md mx-auto">
-                <input type="text" id="refFullName" placeholder="Full Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4">
-                <input type="email" id="refEmail" placeholder="Email Address" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4">
-                <button onclick="saveReferralInfo()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg">Continue to Student Portal</button>
-            </div>
-        </div>
-
-        <div class="text-center text-slate-400 text-sm">
-            <p>© 2024 Coddeey School of Programming. Learn. Build. Grow.</p>
-        </div>
-    </div>
-</div>
-
-<!-- LANDING PAGE -->
 <div id="landingPage" class="min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10 text-center">
         <img src="https://i.imgur.com/wquDcTC.png" alt="Coddeey Logo" class="w-48 mx-auto mb-8">
@@ -179,7 +90,6 @@
     </div>
 </div>
 
-<!-- REGISTRATION FORM -->
 <div id="registrationPage" class="hidden min-h-screen bg-slate-950 p-4 md:p-8 overflow-auto">
     <div class="max-w-5xl mx-auto">
         <div class="flex justify-between mb-6">
@@ -190,12 +100,11 @@
         <p class="text-slate-400 mb-6">Your password will be your SURNAME in CAPITAL LETTERS</p>
 
         <form id="registerForm" class="space-y-8">
-            <!-- 1. Personal Information -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">1. Personal Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="regSurname" placeholder="Surname *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
-                    <input type="text" id="regFirstName" placeholder="First Name *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="text" id="regSurname" placeholder="Surname" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="text" id="regFirstName" placeholder="First Name" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
                     <input type="text" id="regMiddleName" placeholder="Middle Name" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
                     <select id="regGender" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
                         <option value="">Select Gender</option><option>Male</option><option>Female</option>
@@ -209,18 +118,16 @@
                 </div>
             </div>
 
-            <!-- 2. Contact Information -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">2. Contact Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="tel" id="regPhone" placeholder="Phone Number *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="tel" id="regPhone" placeholder="Phone Number" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
                     <input type="tel" id="regAltPhone" placeholder="Alternative Phone" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
-                    <input type="email" id="regEmail" placeholder="Email Address *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
+                    <input type="email" id="regEmail" placeholder="Email Address" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white" required>
                     <input type="tel" id="regWhatsapp" placeholder="WhatsApp Number" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
                 </div>
             </div>
 
-            <!-- 3. Educational Background -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">3. Educational Background</h2>
                 <div class="grid grid-cols-1 gap-4">
@@ -234,7 +141,6 @@
                 </div>
             </div>
 
-            <!-- 4. Preferred Learning Mode -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">4. Preferred Learning Mode</h2>
                 <div class="grid grid-cols-3 gap-3 mb-4">
@@ -247,7 +153,6 @@
                 </select>
             </div>
 
-            <!-- 5. Technical Background -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">5. Technical Background</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -266,7 +171,6 @@
                 </div>
             </div>
 
-            <!-- 6. Referral -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">6. Referral & Marketing</h2>
                 <select id="regHearAbout" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
@@ -277,7 +181,6 @@
                 <input type="text" id="regReferralCode" placeholder="Referral Code (if any)" class="mt-4 w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white">
             </div>
 
-            <!-- 7. Emergency Contact -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-white/10">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">7. Emergency Contact</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -287,7 +190,6 @@
                 </div>
             </div>
 
-            <!-- 8. Terms -->
             <div class="bg-slate-900/80 p-6 rounded-2xl border border-purple-500">
                 <p class="text-sm text-slate-300 mb-4">We collect your information solely for student registration, communication, certification, and course administration.</p>
                 <div class="space-y-2">
@@ -304,7 +206,6 @@
     </div>
 </div>
 
-<!-- LOGIN PAGE -->
 <div id="loginPage" class="hidden min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10">
         <img src="https://i.imgur.com/wquDcTC.png" class="w-40 mx-auto mb-8">
@@ -316,11 +217,9 @@
     </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="mainApp" class="hidden">
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
         <div id="sidebar" class="fixed lg:relative w-72 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 h-screen overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-all duration-300 z-50">
             <div class="p-6 text-center border-b border-white/10">
                 <img src="https://i.imgur.com/wquDcTC.png" class="w-32 mx-auto mb-4">
@@ -355,7 +254,6 @@
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="flex-1">
             <div class="bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-40">
                 <span class="material-icons text-2xl text-white lg:hidden cursor-pointer" onclick="toggleSidebar()">menu</span>
@@ -368,7 +266,6 @@
             </div>
 
             <div class="p-6">
-                <!-- Dashboard -->
                 <div id="dashboardSection" class="section active">
                     <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-6 border border-white/10 mb-6">
                         <h2 class="text-2xl font-bold text-white mb-1">Welcome back, <span id="welcomeName"></span>!</h2>
@@ -405,36 +302,37 @@
                     </div>
                 </div>
 
-                <!-- Fees -->
                 <div id="feesSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Fees Payment</h2>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Form Fee</h3><p class="text-2xl text-purple-400">₦500</p></div>
-                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Acceptance</h3><p class="text-2xl text-purple-400">₦1,000</p></div>
-                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Tuition</h3><p class="text-2xl text-purple-400">₦1,000</p></div>
-                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Total</h3><p class="text-2xl text-purple-400">₦2,500</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Form Fee</h3><p class="text-2xl text-purple-400">N500</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Acceptance</h3><p class="text-2xl text-purple-400">N1,000</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Tuition</h3><p class="text-2xl text-purple-400">N1,000</p></div>
+                            <div class="bg-slate-800 rounded-xl p-4 text-center"><h3 class="font-bold">Total</h3><p class="text-2xl text-purple-400">N2,500</p></div>
                         </div>
                         <div class="flex flex-wrap gap-3">
-                            <button onclick="payFee('Form Fee', 500)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Form (₦500)</button>
-                            <button onclick="payFee('Acceptance', 1000)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Acceptance (₦1,000)</button>
-                            <button onclick="payFee('Tuition', 1000)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Tuition (₦1,000)</button>
-                            <button onclick="payFee('All Fees', 2500)" class="bg-purple-600 px-5 py-2 rounded-xl">Pay All (₦2,500)</button>
+                            <button onclick="payFee('Form Fee', 500)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Form (N500)</button>
+                            <button onclick="payFee('Acceptance', 1000)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Acceptance (N1,000)</button>
+                            <button onclick="payFee('Tuition', 1000)" class="bg-blue-600 px-5 py-2 rounded-xl">Pay Tuition (N1,000)</button>
+                            <button onclick="payFee('All Fees', 2500)" class="bg-purple-600 px-5 py-2 rounded-xl">Pay All (N2,500)</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Course Form - LOADS FROM FIRESTORE -->
                 <div id="courseformSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Course Registration</h2>
                         <p class="text-slate-300 mb-4">Current Stage: <span id="currentStageText" class="text-purple-400 font-bold">1</span></p>
-                        <div id="coursesList" class="space-y-2 mb-4"></div>
-                        <button onclick="registerForStage()" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
+                        <div id="coursesList" class="space-y-2 mb-4">
+                            <div class="bg-slate-800 rounded-xl p-3">HTML & CSS Fundamentals</div>
+                            <div class="bg-slate-800 rounded-xl p-3">JavaScript Basics</div>
+                            <div class="bg-slate-800 rounded-xl p-3">Introduction to Programming</div>
+                        </div>
+                        <button onclick="alert('Registered for Stage ' + (currentUserData?.stage || 1))" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
                     </div>
                 </div>
 
-                <!-- Level -->
                 <div id="levelSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10 text-center">
                         <h2 class="text-xl font-bold text-white mb-4">Your Progress Journey</h2>
@@ -450,15 +348,13 @@
                         </div>
                         <p class="text-slate-300">Stage <span id="userCurrentStage">1</span> of 11</p>
                         <div class="mt-6 flex justify-center gap-2 flex-wrap" id="stageIndicators"></div>
-                        <div class="mt-4 text-slate-400 text-sm">Each stage = 9.09% of total progress</div>
                     </div>
                 </div>
 
-                <!-- Referrals -->
                 <div id="referralsSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Referral Program</h2>
-                        <p class="text-slate-300 mb-4">Share your link and earn <span class="text-yellow-400">10 coins per referral</span></p>
+                        <p class="text-slate-300 mb-4">Share your link and earn 10 coins per referral</p>
                         <div class="flex gap-2 mb-4">
                             <input type="text" id="refLinkDisplayField" readonly class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
                             <button onclick="copyRefLink()" class="bg-purple-600 px-4 rounded-xl">Copy</button>
@@ -470,7 +366,6 @@
                     </div>
                 </div>
 
-                <!-- Grades -->
                 <div id="gradesSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Your Grades</h2>
@@ -478,7 +373,6 @@
                     </div>
                 </div>
 
-                <!-- Messages -->
                 <div id="messagesSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Direct Messages from Admin</h2>
@@ -486,7 +380,6 @@
                     </div>
                 </div>
 
-                <!-- Update -->
                 <div id="updateSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Announcements</h2>
@@ -494,7 +387,6 @@
                     </div>
                 </div>
 
-                <!-- Leaderboard -->
                 <div id="leaderboardSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Global Leaderboard</h2>
@@ -502,7 +394,6 @@
                     </div>
                 </div>
 
-                <!-- Market -->
                 <div id="marketSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Coddeey Market</h2>
@@ -510,7 +401,6 @@
                     </div>
                 </div>
 
-                <!-- Chat -->
                 <div id="chatSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-1">Global Room Chat</h2>
@@ -523,13 +413,11 @@
                     </div>
                 </div>
 
-                <!-- Edit Frame - WITH LIVE PREVIEW -->
                 <div id="editSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Edit Profile Frame</h2>
                         <p class="text-slate-300 mb-4">Customize the border/frame around your profile picture using HTML/CSS</p>
                         
-                        <!-- Live Preview Section -->
                         <div class="bg-slate-800 rounded-xl p-6 mb-6 text-center">
                             <h3 class="text-md font-semibold text-purple-400 mb-3">LIVE PREVIEW</h3>
                             <div id="livePreviewContainer" class="profile-wrapper">
@@ -540,23 +428,12 @@
                             <p class="text-slate-400 text-xs mt-3">Your frame will update instantly as you type</p>
                         </div>
                         
-                        <!-- Code Editor -->
                         <textarea id="frameEditorTextarea" rows="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white font-mono text-sm mb-4"></textarea>
                         
-                        <!-- Save Button -->
                         <button onclick="saveProfileFrame()" class="bg-purple-600 px-6 py-2 rounded-xl">Save Frame</button>
                         
-                        <!-- Info -->
                         <div class="mt-4 p-3 bg-slate-800/50 rounded-xl">
-                            <p class="text-slate-400 text-xs">Tip: Use <code class="text-purple-400">{{photo}}</code> as placeholder for your profile image. Example:</p>
-                            <pre class="text-xs text-slate-400 mt-2 bg-slate-900 p-2 rounded overflow-x-auto">&lt;div style="border: 8px solid #8b5cf6; border-radius: 50%; padding: 4px;"&gt;
-  &lt;img src="{{photo}}" style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;"&gt;
-&lt;/div&gt;</pre>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <h3 class="text-md font-bold text-white mb-2">Locked Stages (Coming Soon)</h3>
-                            <div class="grid grid-cols-10 gap-1" id="lockedStagesGrid"></div>
+                            <p class="text-slate-400 text-xs">Tip: Use <code class="text-purple-400">{{photo}}</code> as placeholder for your profile image.</p>
                         </div>
                     </div>
                 </div>
@@ -566,7 +443,6 @@
 </div>
 
 <script>
-    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyA1SkCz3LyXE2yAYwuobWKISy736zNkcCQ",
         authDomain: "coddeey-c63de.firebaseapp.com",
@@ -582,156 +458,21 @@
 
     let currentUserData = null;
     let livePreviewTimeout = null;
+    let pendingReferralData = null;
 
-    // PROGRESS CALCULATION: Each stage = 9.09% (100/11)
-    const STAGE_POINTS = 100 / 11;
-
-    function calculateStagePoints(assignments, stage) {
-        const stageAssignments = assignments.filter(a => a.stage === stage);
-        if (stageAssignments.length === 0) return 0;
-        let sumScores = 0;
-        stageAssignments.forEach(a => sumScores += a.score);
-        return (sumScores / (stageAssignments.length * 100)) * STAGE_POINTS;
-    }
-
-    function calculateOverallProgress(assignments, currentStage) {
-        let totalPoints = 0;
-        for (let stage = 1; stage <= currentStage; stage++) {
-            totalPoints += calculateStagePoints(assignments, stage);
-        }
-        return Math.min(totalPoints, 100);
-    }
-
-    // ========== REFERRAL SYSTEM ==========
-    function checkForReferral() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const refCode = urlParams.get('ref');
-        
-        if (refCode && refCode.length > 0) {
-            document.getElementById('referralInfoPage').classList.remove('hidden');
-            document.getElementById('landingPage').classList.add('hidden');
-            document.getElementById('registrationPage').classList.add('hidden');
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-            localStorage.setItem('pendingReferralCode', refCode);
-        } else {
-            const savedRefCode = localStorage.getItem('pendingReferralCode');
-            if (savedRefCode) {
-                checkForSavedReferralData(savedRefCode);
-            }
-        }
-    }
-    
-    async function saveReferralInfo() {
-        const fullName = document.getElementById('refFullName').value;
-        const email = document.getElementById('refEmail').value;
-        const refCode = localStorage.getItem('pendingReferralCode');
-        
-        if (!fullName || !email) {
-            alert('Please enter your name and email');
-            return;
-        }
-        
-        const nameParts = fullName.trim().split(' ');
-        const surname = nameParts[0] || '';
-        const firstName = nameParts.slice(1).join(' ') || '';
-        
-        try {
-            await db.collection('referrals').add({
-                fullName: fullName,
-                surname: surname,
-                firstName: firstName,
-                email: email,
-                referralCode: refCode,
-                registered: false,
-                createdAt: new Date()
-            });
-            
-            localStorage.setItem('pendingReferralData', JSON.stringify({
-                surname: surname,
-                firstName: firstName,
-                email: email,
-                referralCode: refCode
-            }));
-            
-            alert('Information saved! You will now be redirected to the student portal.');
-            window.location.href = window.location.pathname;
-        } catch(error) {
-            console.error("Error saving referral:", error);
-            alert("Error saving your information. Please try again.");
-        }
-    }
-    
-    async function checkForSavedReferralData(refCode) {
-        const savedData = localStorage.getItem('pendingReferralData');
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            if (data.referralCode === refCode) {
-                window.pendingReferralData = data;
-                setTimeout(() => {
-                    if (!document.getElementById('registrationPage').classList.contains('hidden')) {
-                        showReferralAutoFillPopup();
-                    }
-                }, 500);
-            }
-        }
-    }
-    
-    function showReferralAutoFillPopup() {
-        if (!window.pendingReferralData) return;
-        
-        const modalHtml = `
-            <div id="referralModal" class="modal">
-                <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500 text-center">
-                    <div class="text-4xl mb-4">👋</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Welcome back!</h3>
-                    <p class="text-slate-300 mb-4">We found your referral information:</p>
-                    <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-left">
-                        <p class="text-white"><strong>Name:</strong> ${window.pendingReferralData.surname} ${window.pendingReferralData.firstName}</p>
-                        <p class="text-white"><strong>Email:</strong> ${window.pendingReferralData.email}</p>
-                    </div>
-                    <p class="text-slate-300 mb-6">Is this you?</p>
-                    <div class="flex gap-4">
-                        <button onclick="autoFillRegistrationForm()" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold">Yes, that's me</button>
-                        <button onclick="closeReferralModal()" class="flex-1 bg-red-600 py-3 rounded-2xl font-bold">No, continue typing</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-    }
-    
-    window.autoFillRegistrationForm = function() {
-        if (window.pendingReferralData) {
-            document.getElementById('regSurname').value = window.pendingReferralData.surname || '';
-            document.getElementById('regFirstName').value = window.pendingReferralData.firstName || '';
-            document.getElementById('regEmail').value = window.pendingReferralData.email || '';
-        }
-        closeReferralModal();
-    };
-    
-    function closeReferralModal() {
-        const modal = document.getElementById('referralModal');
-        if (modal) modal.remove();
-    }
-    // ========== END REFERRAL SYSTEM ==========
-
-    // Navigation
     function goBack() {
         document.getElementById('landingPage').classList.remove('hidden');
         document.getElementById('registrationPage').classList.add('hidden');
         document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('referralInfoPage').classList.add('hidden');
     }
 
     function showRegistration() {
         document.getElementById('landingPage').classList.add('hidden');
         document.getElementById('registrationPage').classList.remove('hidden');
         document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('referralInfoPage').classList.add('hidden');
-        if (window.pendingReferralData) {
-            setTimeout(showReferralAutoFillPopup, 300);
+        
+        if (pendingReferralData) {
+            showReferralPopup();
         }
     }
 
@@ -739,7 +480,6 @@
         document.getElementById('landingPage').classList.add('hidden');
         document.getElementById('registrationPage').classList.add('hidden');
         document.getElementById('loginPage').classList.remove('hidden');
-        document.getElementById('referralInfoPage').classList.add('hidden');
     }
 
     function toggleSidebar() {
@@ -754,7 +494,65 @@
         }
     }
 
-    // Registration
+    function showReferralPopup() {
+        if (!pendingReferralData) return;
+        
+        const modalHtml = `
+            <div id="referralModal" class="modal">
+                <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500 text-center">
+                    <span class="material-icons text-5xl text-purple-400 mb-4">person</span>
+                    <h3 class="text-2xl font-bold text-white mb-2">Welcome Back</h3>
+                    <p class="text-slate-300 mb-4">We found your referral information:</p>
+                    <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-left">
+                        <p class="text-white"><strong>Name:</strong> ${pendingReferralData.fullName}</p>
+                        <p class="text-white"><strong>Email:</strong> ${pendingReferralData.email}</p>
+                    </div>
+                    <p class="text-slate-300 mb-6">Is this you?</p>
+                    <div class="flex gap-4">
+                        <button onclick="autoFillRegistrationForm()" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold">Yes, that's me</button>
+                        <button onclick="closeReferralModal()" class="flex-1 bg-red-600 py-3 rounded-2xl font-bold">No, continue typing</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    function autoFillRegistrationForm() {
+        if (pendingReferralData) {
+            const nameParts = pendingReferralData.fullName.trim().split(' ');
+            const surname = nameParts[0] || '';
+            const firstName = nameParts.slice(1).join(' ') || '';
+            
+            document.getElementById('regSurname').value = surname;
+            document.getElementById('regFirstName').value = firstName;
+            document.getElementById('regEmail').value = pendingReferralData.email || '';
+        }
+        closeReferralModal();
+    }
+    
+    function closeReferralModal() {
+        const modal = document.getElementById('referralModal');
+        if (modal) modal.remove();
+    }
+    
+    async function checkForReferralMatch(email) {
+        if (!email) return null;
+        
+        const snapshot = await db.collection('referrals').where('email', '==', email).limit(1).get();
+        if (!snapshot.empty) {
+            const referralData = snapshot.docs[0].data();
+            pendingReferralData = {
+                fullName: referralData.fullName,
+                email: referralData.email,
+                referralCode: referralData.referralCode
+            };
+            return pendingReferralData;
+        }
+        return null;
+    }
+
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -771,16 +569,26 @@
         const cod = `${codFirstName}${codSurname}/${year}`;
         const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
         
-        let referrerId = null;
-        const enteredReferralCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
-        const pendingRefCode = localStorage.getItem('pendingReferralCode');
+        let referredBy = null;
         
-        if (enteredReferralCode) {
-            const referrerQuery = await db.collection('users').where('referralCode', '==', enteredReferralCode).get();
-            if (!referrerQuery.empty) referrerId = referrerQuery.docs[0].id;
-        } else if (pendingRefCode) {
-            const referrerQuery = await db.collection('users').where('referralCode', '==', pendingRefCode).get();
-            if (!referrerQuery.empty) referrerId = referrerQuery.docs[0].id;
+        const urlParams = new URLSearchParams(window.location.search);
+        let urlReferralCode = urlParams.get('ref');
+        
+        if (!urlReferralCode) {
+            const storedRef = localStorage.getItem('coddeeyReferralCode');
+            if (storedRef) urlReferralCode = storedRef;
+        }
+        
+        if (!urlReferralCode) {
+            const inputRefCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
+            if (inputRefCode) urlReferralCode = inputRefCode;
+        }
+        
+        if (urlReferralCode) {
+            const referrerQuery = await db.collection('users').where('referralCode', '==', urlReferralCode.toUpperCase()).get();
+            if (!referrerQuery.empty) {
+                referredBy = referrerQuery.docs[0].id;
+            }
         }
         
         try {
@@ -795,7 +603,7 @@
                 email: email,
                 cod: cod,
                 referralCode: referralCode,
-                referredBy: referrerId,
+                referredBy: referredBy,
                 referralRewarded: false,
                 photoUrl: document.getElementById('regPhotoUrl').value,
                 phone: document.getElementById('regPhone').value,
@@ -815,18 +623,17 @@
                 createdAt: new Date()
             });
             
-            localStorage.removeItem('pendingReferralCode');
-            localStorage.removeItem('pendingReferralData');
+            localStorage.removeItem('coddeeyReferralCode');
+            pendingReferralData = null;
             
             await auth.signOut();
-            alert(`Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
+            alert(`Registration Successful\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
             showLogin();
         } catch(error) {
             alert("Registration Error: " + error.message);
         }
     });
 
-    // Login
     async function doLogin() {
         const cod = document.getElementById('loginCod').value.trim().toUpperCase();
         const surname = document.getElementById('loginSurname').value.trim().toUpperCase();
@@ -846,25 +653,30 @@
 
     function payFee(item, amount) {
         if (!currentUserData) return;
-        const msg = `I want to pay: ${item} for ₦${amount}. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
+        const msg = `I want to pay: ${item} for N${amount}. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
         window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function copyReferralLink() {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const link = `${baseUrl}?ref=${currentUserData.referralCode}`;
         const input = document.getElementById('referralLinkInput');
+        input.value = link;
         input.select();
         document.execCommand('copy');
-        alert('Referral link copied!');
+        alert('Referral link copied');
     }
     
     function copyRefLink() {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const link = `${baseUrl}?ref=${currentUserData.referralCode}`;
         const input = document.getElementById('refLinkDisplayField');
+        input.value = link;
         input.select();
         document.execCommand('copy');
-        alert('Referral link copied!');
+        alert('Referral link copied');
     }
 
-    // Live Preview for Frame Editor
     function updateLivePreview() {
         const frameCode = document.getElementById('frameEditorTextarea').value;
         const photoUrl = currentUserData?.photoUrl || 'https://via.placeholder.com/150';
@@ -891,7 +703,6 @@
         }
     }
     
-    // Save Frame
     async function saveProfileFrame() {
         const frameCode = document.getElementById('frameEditorTextarea').value;
         if (!frameCode) {
@@ -903,14 +714,13 @@
             await db.collection('users').doc(auth.currentUser.uid).update({ 
                 frameCode: frameCode 
             });
-            alert('Frame saved successfully!');
+            alert('Frame saved successfully');
             await loadUserData();
         } catch(error) {
             alert('Error saving frame: ' + error.message);
         }
     }
 
-    // Load User Data
     async function loadUserData() {
         if (!auth.currentUser) return;
         const doc = await db.collection('users').doc(auth.currentUser.uid).get();
@@ -925,7 +735,6 @@
         }
     }
 
-    // Apply frame to all profile pictures
     function applyFrameToProfile() {
         const frameCode = currentUserData?.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
         const photoUrl = currentUserData?.photoUrl || 'https://via.placeholder.com/150';
@@ -954,10 +763,7 @@
     function updateUI() {
         if (!currentUserData) return;
         
-        const assignments = currentUserData.assignments || [];
-        const currentStage = currentUserData.stage || 1;
-        const progress = calculateOverallProgress(assignments, currentStage);
-        
+        const progress = currentUserData.progress || 0;
         const circumference = 452;
         const offset = circumference - (progress / 100) * circumference;
         
@@ -972,8 +778,8 @@
         document.getElementById('sidebarUserName').innerText = currentUserData.surname + ' ' + currentUserData.firstName;
         document.getElementById('sidebarUserCod').innerText = currentUserData.cod;
         document.getElementById('topUserName').innerText = currentUserData.firstName;
-        document.getElementById('userCurrentStage').innerText = currentStage;
-        document.getElementById('currentStageText').innerText = currentStage;
+        document.getElementById('userCurrentStage').innerText = currentUserData.stage || 1;
+        document.getElementById('currentStageText').innerText = currentUserData.stage || 1;
         
         const baseUrl = window.location.origin + window.location.pathname;
         const referralLink = `${baseUrl}?ref=${currentUserData.referralCode}`;
@@ -995,29 +801,9 @@
             frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
         }
         
-        loadCourses();
         loadGrades();
         loadBroadcastMessages();
         loadMarketProducts();
-    }
-
-    async function loadCourses() {
-        const stage = currentUserData?.stage || 1;
-        const snapshot = await db.collection('courses').where('stage', '==', stage).get();
-        let html = '';
-        if (snapshot.empty) {
-            html = '<div class="bg-slate-800 rounded-xl p-3 text-slate-400">No courses available for this stage yet.</div>';
-        } else {
-            snapshot.forEach(doc => {
-                const course = doc.data();
-                html += `<div class="bg-slate-800 rounded-xl p-3">${course.name}</div>`;
-            });
-        }
-        document.getElementById('coursesList').innerHTML = html;
-    }
-    
-    function registerForStage() {
-        alert(`Registered for Stage ${currentUserData?.stage || 1}! Your progress will be updated by admin.`);
     }
 
     async function loadGrades() {
@@ -1087,7 +873,7 @@
         const text = input.value.trim();
         if (!text) return;
         if (!currentUserData || (currentUserData.coins || 0) < 1) {
-            alert("Insufficient coins! You need at least 1 coin to send a message.");
+            alert("Insufficient coins. You need at least 1 coin to send a message.");
             return;
         }
         
@@ -1137,8 +923,8 @@
                         <img src="${p.imageUrl}" class="w-full h-32 object-cover rounded-lg mb-3">
                         <h3 class="font-bold text-white">${p.name}</h3>
                         <p class="text-slate-400 text-xs">${p.description}</p>
-                        <div class="text-xl font-bold text-purple-400 my-2">₦${p.price}</div>
-                        <button onclick="window.open('https://wa.me/2348167914665?text=I want to buy ${p.name} for ₦${p.price}. My COD: ${currentUserData?.cod}', '_blank')" class="w-full bg-purple-600 py-2 rounded-lg text-sm">Buy Now</button>
+                        <div class="text-xl font-bold text-purple-400 my-2">N${p.price}</div>
+                        <button onclick="window.open('https://wa.me/2348167914665?text=I want to buy ${p.name} for N${p.price}. My COD: ${currentUserData?.cod}', '_blank')" class="w-full bg-purple-600 py-2 rounded-lg text-sm">Buy Now</button>
                     </div>`;
         });
         document.getElementById('marketGridContainer').innerHTML = html || '<p class="text-slate-400 text-center py-8 col-span-3">No products yet</p>';
@@ -1149,14 +935,14 @@
         document.getElementById(section + 'Section').classList.add('active');
         
         document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('bg-purple-600/20', 'text-white'));
-        document.querySelector(`[data-section="${section}"]`)?.classList.add('bg-purple-600/20', 'text-white');
+        const activeBtn = document.querySelector(`[data-section="${section}"]`);
+        if (activeBtn) activeBtn.classList.add('bg-purple-600/20', 'text-white');
         
         if (section === 'leaderboard') loadFullLeaderboard();
         if (section === 'chat') loadChatMessages();
         if (section === 'update') loadBroadcastMessages();
         if (section === 'messages') loadBroadcastMessages();
         if (section === 'market') loadMarketProducts();
-        if (section === 'courseform') loadCourses();
         if (section === 'edit') {
             const frameEditor = document.getElementById('frameEditorTextarea');
             if (frameEditor && currentUserData) {
@@ -1171,7 +957,6 @@
         location.reload();
     }
 
-    // Attach live preview listener
     document.addEventListener('DOMContentLoaded', () => {
         const frameEditor = document.getElementById('frameEditorTextarea');
         if (frameEditor) {
@@ -1182,24 +967,21 @@
         }
     });
 
-    // Auth State Listener
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('registrationPage').classList.add('hidden');
             document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('referralInfoPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             await loadUserData();
             await loadMiniLeaderboard();
             showSection('dashboard');
         } else {
             document.getElementById('mainApp').classList.add('hidden');
-            checkForReferral();
+            goBack();
         }
     });
 
-    // Initialize stage indicators
     for (let i = 1; i <= 11; i++) {
         const div = document.createElement('div');
         div.className = i === 1 ? 'bg-purple-600 rounded-lg p-2 w-10 text-center text-sm font-bold' : 'bg-slate-800 rounded-lg p-2 w-10 text-center text-sm text-slate-600';
@@ -1207,12 +989,17 @@
         document.getElementById('stageIndicators').appendChild(div);
     }
     
-    // Initialize locked stages grid
-    for (let i = 0; i < 10; i++) {
-        const grid = document.getElementById('lockedStagesGrid');
-        if (grid) {
-            grid.innerHTML += '<div class="bg-slate-800 rounded-lg p-2 text-center text-slate-600"><span class="material-icons text-sm">lock</span></div>';
-        }
+    const emailField = document.getElementById('regEmail');
+    if (emailField) {
+        emailField.addEventListener('blur', async function() {
+            const email = this.value.trim();
+            if (email) {
+                await checkForReferralMatch(email);
+                if (pendingReferralData && document.getElementById('registrationPage').classList.contains('hidden') === false) {
+                    showReferralPopup();
+                }
+            }
+        });
     }
 </script>
 </body>
