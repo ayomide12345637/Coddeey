@@ -21,7 +21,6 @@
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 10px; }
         
-        /* Profile frame styles - THICK VISIBLE FRAME */
         .profile-wrapper {
             width: 120px;
             height: 120px;
@@ -42,7 +41,6 @@
             object-fit: cover;
         }
         
-        /* Custom frame container */
         .custom-frame {
             width: 100%;
             height: 100%;
@@ -79,7 +77,6 @@
             backdrop-filter: blur(8px);
         }
         
-        /* Thick frame styles */
         .thick-frame {
             border-radius: 50%;
             border: 8px solid #8b5cf6;
@@ -88,7 +85,6 @@
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
         
-        /* Live preview frame */
         .live-preview {
             width: 150px;
             height: 150px;
@@ -108,7 +104,7 @@
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
 
-<!-- REFERRAL INFO PAGE - ADDED -->
+<!-- REFERRAL INFO PAGE -->
 <div id="referralInfoPage" class="hidden min-h-screen">
     <div class="container mx-auto px-4 py-16 max-w-5xl">
         <div class="text-center mb-12">
@@ -119,23 +115,23 @@
 
         <div class="grid md:grid-cols-2 gap-8 mb-12">
             <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
-                <h2 class="text-2xl font-bold text-white mb-4">📚 What You'll Learn</h2>
+                <h2 class="text-2xl font-bold text-white mb-4">What You'll Learn</h2>
                 <ul class="space-y-3 text-slate-300">
-                    <li>✓ HTML & CSS Fundamentals</li>
-                    <li>✓ JavaScript & React</li>
-                    <li>✓ Backend Development (Node.js)</li>
-                    <li>✓ Database Management</li>
-                    <li>✓ Real-world Projects</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> HTML & CSS Fundamentals</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> JavaScript & React</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Backend Development (Node.js)</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Database Management</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Real-world Projects</li>
                 </ul>
             </div>
             <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
-                <h2 class="text-2xl font-bold text-white mb-4">🎁 What You Get</h2>
+                <h2 class="text-2xl font-bold text-white mb-4">What You Get</h2>
                 <ul class="space-y-3 text-slate-300">
-                    <li>✓ Live Classes & Recordings</li>
-                    <li>✓ Weekly Assignments with Feedback</li>
-                    <li>✓ Certificate on Completion</li>
-                    <li>✓ 24/7 Community Support</li>
-                    <li>✓ Internship Opportunities</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Live Classes & Recordings</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Weekly Assignments with Feedback</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Certificate on Completion</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> 24/7 Community Support</li>
+                    <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Internship Opportunities</li>
                 </ul>
             </div>
         </div>
@@ -162,7 +158,7 @@
             <div class="max-w-md mx-auto">
                 <input type="text" id="refFullName" placeholder="Full Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4">
                 <input type="email" id="refEmail" placeholder="Email Address" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4">
-                <button onclick="saveReferralInfo()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg">Continue to Student Portal →</button>
+                <button onclick="saveReferralInfo()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg">Continue to Student Portal</button>
             </div>
         </div>
 
@@ -183,12 +179,12 @@
     </div>
 </div>
 
-<!-- REGISTRATION FORM - COMPLETE -->
+<!-- REGISTRATION FORM -->
 <div id="registrationPage" class="hidden min-h-screen bg-slate-950 p-4 md:p-8 overflow-auto">
     <div class="max-w-5xl mx-auto">
         <div class="flex justify-between mb-6">
             <img src="https://i.imgur.com/wquDcTC.png" class="w-40">
-            <button onclick="goBack()" class="text-blue-400 hover:text-white text-lg">← Back</button>
+            <button onclick="goBack()" class="text-blue-400 hover:text-white text-lg">Back</button>
         </div>
         <h1 class="text-3xl md:text-4xl font-bold mb-2 text-white">Student Registration Form</h1>
         <p class="text-slate-400 mb-6">Your password will be your SURNAME in CAPITAL LETTERS</p>
@@ -316,7 +312,7 @@
         <input type="text" id="loginCod" placeholder="COD Number (e.g., ADE/2024)" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
         <input type="text" id="loginSurname" placeholder="Surname (CAPITAL LETTERS)" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white mb-6 focus:border-purple-500 outline-none">
         <button onclick="doLogin()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-semibold text-lg mb-4">Login</button>
-        <button onclick="goBack()" class="w-full text-slate-400 hover:text-white">← Back</button>
+        <button onclick="goBack()" class="w-full text-slate-400 hover:text-white">Back</button>
     </div>
 </div>
 
@@ -328,7 +324,6 @@
         <div id="sidebar" class="fixed lg:relative w-72 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 h-screen overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-all duration-300 z-50">
             <div class="p-6 text-center border-b border-white/10">
                 <img src="https://i.imgur.com/wquDcTC.png" class="w-32 mx-auto mb-4">
-                <!-- Profile frame with thick border -->
                 <div id="globalProfileFrame" class="profile-wrapper">
                     <div class="profile-frame thick-frame" id="profileFrameDisplay">
                         <img id="sidebarProfileImg" src="" alt="Profile">
@@ -403,7 +398,7 @@
                                 <p class="text-slate-400 text-sm mt-3">Referrals: <span id="referralCountDisplay">0</span> | Coins earned: <span id="referralCoinsEarned">0</span></p>
                             </div>
                             <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                <h3 class="text-lg font-semibold text-white mb-3">🏆 Top 5 Leaderboard</h3>
+                                <h3 class="text-lg font-semibold text-white mb-3">Top 5 Leaderboard</h3>
                                 <div id="miniLeaderboardList" class="space-y-2"></div>
                             </div>
                         </div>
@@ -429,17 +424,13 @@
                     </div>
                 </div>
 
-                <!-- Course Form -->
+                <!-- Course Form - LOADS FROM FIRESTORE -->
                 <div id="courseformSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Course Registration</h2>
                         <p class="text-slate-300 mb-4">Current Stage: <span id="currentStageText" class="text-purple-400 font-bold">1</span></p>
-                        <div id="coursesList" class="space-y-2 mb-4">
-                            <div class="bg-slate-800 rounded-xl p-3">📘 HTML & CSS Fundamentals</div>
-                            <div class="bg-slate-800 rounded-xl p-3">📘 JavaScript Basics</div>
-                            <div class="bg-slate-800 rounded-xl p-3">📘 Introduction to Programming</div>
-                        </div>
-                        <button onclick="alert('Registered for Stage ' + (currentUserData?.stage || 1))" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
+                        <div id="coursesList" class="space-y-2 mb-4"></div>
+                        <button onclick="registerForStage()" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
                     </div>
                 </div>
 
@@ -459,6 +450,7 @@
                         </div>
                         <p class="text-slate-300">Stage <span id="userCurrentStage">1</span> of 11</p>
                         <div class="mt-6 flex justify-center gap-2 flex-wrap" id="stageIndicators"></div>
+                        <div class="mt-4 text-slate-400 text-sm">Each stage = 9.09% of total progress</div>
                     </div>
                 </div>
 
@@ -505,7 +497,7 @@
                 <!-- Leaderboard -->
                 <div id="leaderboardSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                        <h2 class="text-xl font-bold text-white mb-4">🏆 Global Leaderboard</h2>
+                        <h2 class="text-xl font-bold text-white mb-4">Global Leaderboard</h2>
                         <div id="fullLeaderboardContainer" class="space-y-2 max-h-96 overflow-y-auto"></div>
                     </div>
                 </div>
@@ -522,7 +514,7 @@
                 <div id="chatSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-1">Global Room Chat</h2>
-                        <p class="text-slate-400 text-sm mb-4">💰 1 coin per message</p>
+                        <p class="text-slate-400 text-sm mb-4">1 coin per message</p>
                         <div id="chatMessagesContainer" class="h-80 overflow-y-auto mb-4 space-y-2 bg-slate-800/50 rounded-xl p-3"></div>
                         <div class="flex gap-2">
                             <input type="text" id="chatInputField" placeholder="Type your message..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white">
@@ -539,7 +531,7 @@
                         
                         <!-- Live Preview Section -->
                         <div class="bg-slate-800 rounded-xl p-6 mb-6 text-center">
-                            <h3 class="text-md font-semibold text-purple-400 mb-3">🔴 LIVE PREVIEW</h3>
+                            <h3 class="text-md font-semibold text-purple-400 mb-3">LIVE PREVIEW</h3>
                             <div id="livePreviewContainer" class="profile-wrapper">
                                 <div id="livePreviewFrame" class="profile-frame thick-frame">
                                     <img id="livePreviewImg" src="" alt="Preview">
@@ -556,14 +548,14 @@
                         
                         <!-- Info -->
                         <div class="mt-4 p-3 bg-slate-800/50 rounded-xl">
-                            <p class="text-slate-400 text-xs">💡 Tip: Use <code class="text-purple-400">{{photo}}</code> as placeholder for your profile image. Example:</p>
+                            <p class="text-slate-400 text-xs">Tip: Use <code class="text-purple-400">{{photo}}</code> as placeholder for your profile image. Example:</p>
                             <pre class="text-xs text-slate-400 mt-2 bg-slate-900 p-2 rounded overflow-x-auto">&lt;div style="border: 8px solid #8b5cf6; border-radius: 50%; padding: 4px;"&gt;
   &lt;img src="{{photo}}" style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;"&gt;
 &lt;/div&gt;</pre>
                         </div>
                         
                         <div class="mt-6">
-                            <h3 class="text-md font-bold text-white mb-2">🔒 Locked Stages (Coming Soon)</h3>
+                            <h3 class="text-md font-bold text-white mb-2">Locked Stages (Coming Soon)</h3>
                             <div class="grid grid-cols-10 gap-1" id="lockedStagesGrid"></div>
                         </div>
                     </div>
@@ -591,24 +583,38 @@
     let currentUserData = null;
     let livePreviewTimeout = null;
 
-    // ========== REFERRAL SYSTEM - ADDED ==========
-    // Check for referral code in URL
+    // PROGRESS CALCULATION: Each stage = 9.09% (100/11)
+    const STAGE_POINTS = 100 / 11;
+
+    function calculateStagePoints(assignments, stage) {
+        const stageAssignments = assignments.filter(a => a.stage === stage);
+        if (stageAssignments.length === 0) return 0;
+        let sumScores = 0;
+        stageAssignments.forEach(a => sumScores += a.score);
+        return (sumScores / (stageAssignments.length * 100)) * STAGE_POINTS;
+    }
+
+    function calculateOverallProgress(assignments, currentStage) {
+        let totalPoints = 0;
+        for (let stage = 1; stage <= currentStage; stage++) {
+            totalPoints += calculateStagePoints(assignments, stage);
+        }
+        return Math.min(totalPoints, 100);
+    }
+
+    // ========== REFERRAL SYSTEM ==========
     function checkForReferral() {
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref');
         
         if (refCode && refCode.length > 0) {
-            // Show referral info page instead of normal landing
             document.getElementById('referralInfoPage').classList.remove('hidden');
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('registrationPage').classList.add('hidden');
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('mainApp').classList.add('hidden');
-            
-            // Store referral code for later use
             localStorage.setItem('pendingReferralCode', refCode);
         } else {
-            // Check if there's pending referral data from a previous visit
             const savedRefCode = localStorage.getItem('pendingReferralCode');
             if (savedRefCode) {
                 checkForSavedReferralData(savedRefCode);
@@ -626,12 +632,10 @@
             return;
         }
         
-        // Parse name into surname and first name
         const nameParts = fullName.trim().split(' ');
         const surname = nameParts[0] || '';
         const firstName = nameParts.slice(1).join(' ') || '';
         
-        // Save to Firestore referrals collection
         try {
             await db.collection('referrals').add({
                 fullName: fullName,
@@ -643,7 +647,6 @@
                 createdAt: new Date()
             });
             
-            // Store for auto-fill during registration
             localStorage.setItem('pendingReferralData', JSON.stringify({
                 surname: surname,
                 firstName: firstName,
@@ -652,8 +655,6 @@
             }));
             
             alert('Information saved! You will now be redirected to the student portal.');
-            
-            // Redirect to normal portal (without ?ref)
             window.location.href = window.location.pathname;
         } catch(error) {
             console.error("Error saving referral:", error);
@@ -667,7 +668,6 @@
             const data = JSON.parse(savedData);
             if (data.referralCode === refCode) {
                 window.pendingReferralData = data;
-                // Check if registration form is open
                 setTimeout(() => {
                     if (!document.getElementById('registrationPage').classList.contains('hidden')) {
                         showReferralAutoFillPopup();
@@ -730,7 +730,6 @@
         document.getElementById('registrationPage').classList.remove('hidden');
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('referralInfoPage').classList.add('hidden');
-        // Check for pending referral data after opening registration
         if (window.pendingReferralData) {
             setTimeout(showReferralAutoFillPopup, 300);
         }
@@ -767,13 +766,11 @@
         const dob = document.getElementById('regDob').value;
         const year = dob ? dob.slice(-4) : "2024";
         
-        // Generate COD: First 3 letters of First Name + First letter of Surname + / + Year
         const codFirstName = firstName.slice(0, 3).toUpperCase();
         const codSurname = surname[0].toUpperCase();
         const cod = `${codFirstName}${codSurname}/${year}`;
         const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
         
-        // Check for referral code
         let referrerId = null;
         const enteredReferralCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
         const pendingRefCode = localStorage.getItem('pendingReferralCode');
@@ -818,15 +815,14 @@
                 createdAt: new Date()
             });
             
-            // Clear referral data
             localStorage.removeItem('pendingReferralCode');
             localStorage.removeItem('pendingReferralData');
             
             await auth.signOut();
-            alert(`✅ Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
+            alert(`Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
             showLogin();
         } catch(error) {
-            alert("❌ Registration Error: " + error.message);
+            alert("Registration Error: " + error.message);
         }
     });
 
@@ -844,7 +840,7 @@
             
             await auth.signInWithEmailAndPassword(userData.email, userData.surname.toUpperCase());
         } catch(error) {
-            alert("❌ Login failed: " + error.message);
+            alert("Login failed: " + error.message);
         }
     }
 
@@ -858,14 +854,14 @@
         const input = document.getElementById('referralLinkInput');
         input.select();
         document.execCommand('copy');
-        alert('✅ Referral link copied!');
+        alert('Referral link copied!');
     }
     
     function copyRefLink() {
         const input = document.getElementById('refLinkDisplayField');
         input.select();
         document.execCommand('copy');
-        alert('✅ Referral link copied!');
+        alert('Referral link copied!');
     }
 
     // Live Preview for Frame Editor
@@ -885,7 +881,6 @@
         const previewContainer = document.getElementById('livePreviewFrame');
         if (previewContainer) {
             previewContainer.innerHTML = previewHtml;
-            // Also ensure the image is properly sized
             const img = previewContainer.querySelector('img');
             if (img) {
                 img.style.width = '100%';
@@ -908,10 +903,10 @@
             await db.collection('users').doc(auth.currentUser.uid).update({ 
                 frameCode: frameCode 
             });
-            alert('✅ Frame saved successfully!');
+            alert('Frame saved successfully!');
             await loadUserData();
         } catch(error) {
-            alert('❌ Error saving frame: ' + error.message);
+            alert('Error saving frame: ' + error.message);
         }
     }
 
@@ -922,7 +917,7 @@
         if (doc.exists) {
             currentUserData = doc.data();
             if (currentUserData.suspended) {
-                alert('⚠️ Account suspended. Contact admin.');
+                alert('Account suspended. Contact admin.');
                 logout();
                 return;
             }
@@ -937,13 +932,11 @@
         
         const processedFrame = frameCode.replace(/{{photo}}/g, photoUrl);
         
-        // Update sidebar profile
         const profileDisplay = document.getElementById('profileFrameDisplay');
         if (profileDisplay) {
             profileDisplay.innerHTML = processedFrame;
         }
         
-        // Update live preview if on edit page
         const livePreview = document.getElementById('livePreviewFrame');
         if (livePreview && document.getElementById('editSection').classList.contains('active')) {
             const previewHtml = frameCode.replace(/{{photo}}/g, photoUrl);
@@ -961,8 +954,10 @@
     function updateUI() {
         if (!currentUserData) return;
         
-        // Calculate progress (simple for now)
-        const progress = currentUserData.progress || 0;
+        const assignments = currentUserData.assignments || [];
+        const currentStage = currentUserData.stage || 1;
+        const progress = calculateOverallProgress(assignments, currentStage);
+        
         const circumference = 452;
         const offset = circumference - (progress / 100) * circumference;
         
@@ -973,12 +968,12 @@
         document.getElementById('dashboardCoinsAmount').innerText = currentUserData.coins || 0;
         document.getElementById('sidebarCoinsAmount').innerText = currentUserData.coins || 0;
         document.getElementById('welcomeName').innerText = currentUserData.firstName;
-        document.getElementById('dashboardCodText').innerHTML = '📛 ' + currentUserData.cod;
+        document.getElementById('dashboardCodText').innerHTML = currentUserData.cod;
         document.getElementById('sidebarUserName').innerText = currentUserData.surname + ' ' + currentUserData.firstName;
         document.getElementById('sidebarUserCod').innerText = currentUserData.cod;
         document.getElementById('topUserName').innerText = currentUserData.firstName;
-        document.getElementById('userCurrentStage').innerText = currentUserData.stage || 1;
-        document.getElementById('currentStageText').innerText = currentUserData.stage || 1;
+        document.getElementById('userCurrentStage').innerText = currentStage;
+        document.getElementById('currentStageText').innerText = currentStage;
         
         const baseUrl = window.location.origin + window.location.pathname;
         const referralLink = `${baseUrl}?ref=${currentUserData.referralCode}`;
@@ -990,22 +985,39 @@
         document.getElementById('referralCoinsEarned').innerText = refCoins;
         document.getElementById('referralCoinsTotal').innerText = refCoins;
         
-        // Top profile image
         const topImg = document.getElementById('topProfileImg');
         if (topImg) topImg.src = currentUserData.photoUrl || 'https://via.placeholder.com/50';
         
-        // Apply custom frame
         applyFrameToProfile();
         
-        // Set frame editor value
         const frameEditor = document.getElementById('frameEditorTextarea');
         if (frameEditor && !frameEditor.value) {
             frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
         }
         
+        loadCourses();
         loadGrades();
         loadBroadcastMessages();
         loadMarketProducts();
+    }
+
+    async function loadCourses() {
+        const stage = currentUserData?.stage || 1;
+        const snapshot = await db.collection('courses').where('stage', '==', stage).get();
+        let html = '';
+        if (snapshot.empty) {
+            html = '<div class="bg-slate-800 rounded-xl p-3 text-slate-400">No courses available for this stage yet.</div>';
+        } else {
+            snapshot.forEach(doc => {
+                const course = doc.data();
+                html += `<div class="bg-slate-800 rounded-xl p-3">${course.name}</div>`;
+            });
+        }
+        document.getElementById('coursesList').innerHTML = html;
+    }
+    
+    function registerForStage() {
+        alert(`Registered for Stage ${currentUserData?.stage || 1}! Your progress will be updated by admin.`);
     }
 
     async function loadGrades() {
@@ -1018,7 +1030,7 @@
             else if (a.score >= 40) grade = 'C';
             html += `<div class="bg-slate-800 rounded-xl p-3 flex justify-between items-center">
                         <div><span class="font-bold text-white">${a.title}</span><p class="text-slate-400 text-xs">Score: ${a.score}% (${grade})</p></div>
-                        <div class="text-yellow-400 text-sm">+${a.coinsEarned} 🪙</div>
+                        <div class="text-yellow-400 text-sm">+${a.coinsEarned} coins</div>
                     </div>`;
         });
         document.getElementById('assignmentsListContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No assignments yet</p>';
@@ -1045,7 +1057,7 @@
             const data = doc.data();
             html += `<div class="flex justify-between items-center p-2 bg-slate-800 rounded-xl">
                         <div><span class="text-purple-400 text-sm font-bold">#${rank++}</span> <span class="text-white text-sm">${data.firstName || 'User'}</span></div>
-                        <div class="text-sm"><span class="text-yellow-400">💰 ${data.coins || 0}</span> <span class="text-purple-400 ml-2">${Math.round(data.progress || 0)}%</span></div>
+                        <div class="text-sm"><span class="text-yellow-400">${data.coins || 0} coins</span> <span class="text-purple-400 ml-2">${Math.round(data.progress || 0)}%</span></div>
                     </div>`;
         }
         document.getElementById('fullLeaderboardContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No users yet</p>';
@@ -1075,7 +1087,7 @@
         const text = input.value.trim();
         if (!text) return;
         if (!currentUserData || (currentUserData.coins || 0) < 1) {
-            alert("❌ Insufficient coins! You need at least 1 coin to send a message.");
+            alert("Insufficient coins! You need at least 1 coin to send a message.");
             return;
         }
         
@@ -1108,7 +1120,7 @@
             const msg = doc.data();
             const time = msg.timestamp?.toDate ? new Date(msg.timestamp.toDate()).toLocaleString() : '';
             html += `<div class="bg-slate-800 rounded-xl p-3">
-                        <small class="text-slate-400 text-xs">📢 ${time}</small>
+                        <small class="text-slate-400 text-xs">${time}</small>
                         <p class="text-white text-sm mt-1">${msg.text}</p>
                     </div>`;
         });
@@ -1144,8 +1156,8 @@
         if (section === 'update') loadBroadcastMessages();
         if (section === 'messages') loadBroadcastMessages();
         if (section === 'market') loadMarketProducts();
+        if (section === 'courseform') loadCourses();
         if (section === 'edit') {
-            // Refresh frame editor and preview
             const frameEditor = document.getElementById('frameEditorTextarea');
             if (frameEditor && currentUserData) {
                 frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
@@ -1183,7 +1195,6 @@
             showSection('dashboard');
         } else {
             document.getElementById('mainApp').classList.add('hidden');
-            // Show normal landing or referral page based on URL
             checkForReferral();
         }
     });
