@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Coddeey - Start Your Coding Journey</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
+
+<div class="container mx-auto px-4 py-16 max-w-5xl">
+    <div class="text-center mb-12">
+        <img src="https://i.imgur.com/wquDcTC.png" alt="Coddeey Logo" class="w-48 mx-auto mb-8">
+        <h1 class="text-5xl font-bold text-white mb-4">Start Your Coding Journey</h1>
+        <p class="text-xl text-slate-300">Learn to code from scratch with expert guidance</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-icons text-purple-400">menu_book</span>
+                <h2 class="text-2xl font-bold text-white">What You'll Learn</h2>
+            </div>
+            <ul class="space-y-3 text-slate-300">
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> HTML & CSS Fundamentals</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> JavaScript & React</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Backend Development Node.js</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Database Management</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Real-world Projects</li>
+            </ul>
+        </div>
+        <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-icons text-purple-400">card_giftcard</span>
+                <h2 class="text-2xl font-bold text-white">What You Get</h2>
+            </div>
+            <ul class="space-y-3 text-slate-300">
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Live Classes & Recordings</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Weekly Assignments with Feedback</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Certificate on Completion</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> 24/7 Community Support</li>
+                <li class="flex items-center gap-2"><span class="material-icons text-purple-400 text-sm">check_circle</span> Internship Opportunities</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-purple-600/20 rounded-2xl p-6 text-center border border-purple-500">
+            <span class="material-icons text-4xl text-purple-400 mb-2">trending_up</span>
+            <div class="text-3xl font-bold text-purple-400 mb-2">70%+</div>
+            <p class="text-white text-sm">Graduate with 70%+ get paid business opportunities</p>
+        </div>
+        <div class="bg-blue-600/20 rounded-2xl p-6 text-center border border-blue-500">
+            <span class="material-icons text-4xl text-blue-400 mb-2">emoji_events</span>
+            <div class="text-3xl font-bold text-blue-400 mb-2">Top Student</div>
+            <p class="text-white text-sm">Highest scorer recruited to Coddeey company</p>
+        </div>
+        <div class="bg-green-600/20 rounded-2xl p-6 text-center border border-green-500">
+            <span class="material-icons text-4xl text-green-400 mb-2">payments</span>
+            <div class="text-3xl font-bold text-green-400 mb-2">Stage 10+</div>
+            <p class="text-white text-sm">Start earning monthly income</p>
+        </div>
+    </div>
+
+    <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10 text-center mb-8">
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <span class="material-icons text-purple-400">person_add</span>
+            <h2 class="text-2xl font-bold text-white">Enter Your Information</h2>
+        </div>
+        <p class="text-slate-300 mb-6">Please provide your details to continue</p>
+        
+        <div class="max-w-md mx-auto">
+            <input type="text" id="referralSurname" placeholder="Surname" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
+            <input type="text" id="referralFirstName" placeholder="First Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
+            <input type="text" id="referralMiddleName" placeholder="Middle Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
+            <input type="email" id="referralEmail" placeholder="Email Address" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-6 focus:border-purple-500 outline-none">
+            
+            <button onclick="saveReferralInfo()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg hover:scale-105 transition">
+                Save Information
+            </button>
+        </div>
+        
+        <div id="googleFormSection" class="hidden mt-8 pt-6 border-t border-white/10">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <span class="material-icons text-green-400">check_circle</span>
+                <h3 class="text-xl font-bold text-white">Information Saved Successfully</h3>
+            </div>
+            <p class="text-slate-300 mb-6">Click below to complete your registration</p>
+            <a href="https://forms.gle/PQwyUR17aVhxv9Wh9" target="_blank" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition">
+                <span class="material-icons">description</span>
+                Open Google Form
+            </a>
+            <p class="text-slate-400 text-sm mt-6">After submitting the form, you will be contacted via WhatsApp</p>
+        </div>
+    </div>
+
+    <div class="text-center text-slate-400 text-sm">
+        <p>2024 Coddeey School of Programming. Learn. Build. Grow.</p>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA1SkCz3LyXE2yAYwuobWKISy736zNkcCQ",
+        authDomain: "coddeey-c63de.firebaseapp.com",
+        projectId: "coddeey-c63de",
+        storageBucket: "coddeey-c63de.firebasestorage.app",
+        messagingSenderId: "945128256248",
+        appId: "1:945128256248:web:cf0b22d442ef2c496e010d"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const urlPath = window.location.pathname;
+    const refCode = urlPath.split('/').pop();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryRef = urlParams.get('ref');
+    
+    const finalRefCode = refCode || queryRef;
+    
+    if (finalRefCode && finalRefCode.length > 0 && finalRefCode !== 'referral.html') {
+        localStorage.setItem('coddeeyReferralCode', finalRefCode);
+        
+        db.collection('referralClicks').add({
+            referralCode: finalRefCode,
+            timestamp: new Date(),
+            userAgent: navigator.userAgent
+        }).catch(function(e) { console.log('Click tracked'); });
+    }
+    
+    async function saveReferralInfo() {
+        const surname = document.getElementById('referralSurname').value.trim();
+        const firstName = document.getElementById('referralFirstName').value.trim();
+        const middleName = document.getElementById('referralMiddleName').value.trim();
+        const email = document.getElementById('referralEmail').value.trim();
+        
+        if (!surname) {
+            alert('Please enter your surname');
+            return;
+        }
+        
+        if (!firstName) {
+            alert('Please enter your first name');
+            return;
+        }
+        
+        if (!email) {
+            alert('Please enter your email address');
+            return;
+        }
+        
+        const refCode = localStorage.getItem('coddeeyReferralCode');
+        
+        try {
+            await db.collection('referrals').add({
+                surname: surname,
+                firstName: firstName,
+                middleName: middleName,
+                fullName: surname + ' ' + firstName + ' ' + middleName,
+                email: email,
+                referralCode: refCode,
+                timestamp: new Date()
+            });
+            
+            localStorage.setItem('coddeeyReferralUserData', JSON.stringify({
+                surname: surname,
+                firstName: firstName,
+                middleName: middleName,
+                fullName: surname + ' ' + firstName + ' ' + middleName,
+                email: email
+            }));
+            
+            document.getElementById('googleFormSection').classList.remove('hidden');
+            
+            alert('Information saved successfully! You can now proceed to the Google Form.');
+            
+        } catch(error) {
+            alert('Error saving information: ' + error.message);
+        }
+    }
+</script>
+</body>
+</html>
