@@ -14,7 +14,7 @@
     
     <style>
         * { font-family: 'Inter', sans-serif; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .section { display: none; }
         .section.active { display: block; }
         ::-webkit-scrollbar { width: 6px; }
@@ -78,7 +78,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen text-slate-100">
 
 <div id="landingPage" class="min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10 text-center">
@@ -460,6 +460,11 @@
     let livePreviewTimeout = null;
     let pendingReferralData = null;
 
+    // Get the base URL for referral links
+    function getBaseUrl() {
+        return window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+    }
+
     function goBack() {
         document.getElementById('landingPage').classList.remove('hidden');
         document.getElementById('registrationPage').classList.add('hidden');
@@ -496,6 +501,7 @@
 
     function showReferralPopup() {
         if (!pendingReferralData) return;
+        if (document.getElementById('referralModal')) return;
         
         const modalHtml = `
             <div id="referralModal" class="modal">
@@ -521,13 +527,17 @@
     
     function autoFillRegistrationForm() {
         if (pendingReferralData) {
-            const nameParts = pendingReferralData.fullName.trim().split(' ');
-            const surname = nameParts[0] || '';
-            const firstName = nameParts.slice(1).join(' ') || '';
+            const surname = pendingReferralData.surname || '';
+            const firstName = pendingReferralData.firstName || '';
+            const middleName = pendingReferralData.middleName || '';
             
             document.getElementById('regSurname').value = surname;
             document.getElementById('regFirstName').value = firstName;
+            document.getElementById('regMiddleName').value = middleName;
             document.getElementById('regEmail').value = pendingReferralData.email || '';
+            if (pendingReferralData.referralCode) {
+                document.getElementById('regReferralCode').value = pendingReferralData.referralCode;
+            }
         }
         closeReferralModal();
     }
@@ -544,7 +554,10 @@
         if (!snapshot.empty) {
             const referralData = snapshot.docs[0].data();
             pendingReferralData = {
-                fullName: referralData.fullName,
+                surname: referralData.surname || '',
+                firstName: referralData.firstName || '',
+                middleName: referralData.middleName || '',
+                fullName: `${referralData.surname || ''} ${referralData.firstName || ''}`.trim(),
                 email: referralData.email,
                 referralCode: referralData.referralCode
             };
@@ -553,16 +566,42 @@
         return null;
     }
 
+    function computeOverallProgress(assignmentsList, targetStage) {
+        if (!assignmentsList || assignmentsList.length === 0) return 0;
+        
+        let aggregateProgress = 0;
+        const totalPossibleStages = 11;
+        const scaleWeightFactor = 9.09;
+        
+        for (let currentStageKey = 1; currentStageKey <= totalPossibleStages; currentStageKey++) {
+            const currentStageAssignments = assignmentsList.filter(item => parseInt(item.stage || 1) === currentStageKey);
+            
+            if (currentStageAssignments.length > 0) {
+                let assignmentSumScores = 0;
+                currentStageAssignments.forEach(element => {
+                    assignmentSumScores += parseFloat(element.score || 0);
+                });
+                
+                const stagePoints = (assignmentSumScores / (currentStageAssignments.length * 100)) * scaleWeightFactor;
+                aggregateProgress += stagePoints;
+            }
+        }
+        
+        if (aggregateProgress > 100) aggregateProgress = 100;
+        return aggregateProgress;
+    }
+
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const surname = document.getElementById('regSurname').value;
-        const firstName = document.getElementById('regFirstName').value;
-        const middleName = document.getElementById('regMiddleName').value || "";
-        const email = document.getElementById('regEmail').value;
+        const surname = document.getElementById('regSurname').value.trim();
+        const firstName = document.getElementById('regFirstName').value.trim();
+        const middleName = document.getElementById('regMiddleName').value.trim() || "";
+        const email = document.getElementById('regEmail').value.trim();
         const password = surname.toUpperCase();
+        
         const dob = document.getElementById('regDob').value;
-        const year = dob ? dob.slice(-4) : "2024";
+        const year = dob ? dob.slice(0, 4) : "2024";
         
         const codFirstName = firstName.slice(0, 3).toUpperCase();
         const codSurname = surname[0].toUpperCase();
@@ -626,81 +665,64 @@
             localStorage.removeItem('coddeeyReferralCode');
             pendingReferralData = null;
             
-            alert(`Registration Successful\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
+            alert(`Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login using these details now.`);
+            
+            await auth.signOut();
+            
+            document.getElementById('registrationPage').classList.add('hidden');
             showLogin();
+            
         } catch(error) {
             alert("Registration Error: " + error.message);
         }
     });
 
     async function doLogin() {
-    const codInput = document.getElementById('loginCod').value.trim().toUpperCase();
-    const enteredSurnameInput = document.getElementById('loginSurname').value.trim();
-
-    if (!codInput || !enteredSurnameInput) {
-        alert("Please enter both COD Number and Surname.");
-        return;
-    }
-
-    try {
-        const querySnapshot = await db.collection('users').where('cod', '==', codInput).get();
-
-        if (querySnapshot.empty) {
-            alert("COD not found. Please register first.");
-            return;
-        }
-
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
-
-        const storedSurname = (userData.surname || "").trim().toUpperCase();
-        const enteredSurname = enteredSurnameInput.trim().toUpperCase();
-
-        console.log("🔍 Login Debug:", {
-            cod: codInput,
-            enteredSurnameRaw: enteredSurnameInput,
-            storedSurnameRaw: userData.surname,
-            enteredUpper: enteredSurname,
-            storedUpper: storedSurname,
-            emailFromDB: userData.email,
-            codFromDB: userData.cod
-        });
-
-        if (storedSurname !== enteredSurname) {
-            alert(`❌ Invalid surname!\n\nYou entered: "\( {enteredSurnameInput}"\nRegistered: " \){userData.surname}"`);
-            return;
-        }
-
-        // Try to login
-        const email = userData.email;
-        const password = enteredSurname;
-
-        console.log("Attempting login with:", { email, passwordLength: password.length });
-
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-
-        console.log("✅ Firebase Auth Success!", userCredential.user.uid);
-
-        alert("✅ Login successful!");
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('mainApp').classList.remove('hidden');
+        const codValue = document.getElementById('loginCod').value.trim().toUpperCase();
+        const surnameValue = document.getElementById('loginSurname').value.trim().toUpperCase();
         
-        await loadUserData();
-        await loadMiniLeaderboard();
-        showSection('dashboard');
-
-    } catch (error) {
-        console.error("❌ Full Login Error:", error);
-        console.error("Error Code:", error.code);
-        console.error("Error Message:", error.message);
-
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
-            alert("❌ Login failed: Wrong email or password.\n\nThis usually happens if:\n1. You didn't complete registration, or\n2. There was an error during registration.\n\nPlease register a new account and try again.");
-        } else {
-            alert("Login error: " + error.message);
+        if (!codValue || !surnameValue) {
+            alert("Please enter both COD Number and Surname.");
+            return;
+        }
+        
+        try {
+            const usersQuery = await db.collection('users').where('cod', '==', codValue).get();
+            
+            if (usersQuery.empty) {
+                alert("COD not found. Please register first.");
+                return;
+            }
+            
+            const userDocument = usersQuery.docs[0];
+            const userInformation = userDocument.data();
+            
+            const storedSurnameUpper = (userInformation.surname || "").trim().toUpperCase();
+            
+            if (storedSurnameUpper !== surnameValue) {
+                alert("Invalid surname. Please check and try again.");
+                return;
+            }
+            
+            const userEmail = userInformation.email;
+            const userPassword = surnameValue;
+            
+            const loginResult = await auth.signInWithEmailAndPassword(userEmail, userPassword);
+            
+            if (loginResult.user) {
+                alert("Login successful!");
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                await loadUserData();
+                await loadMiniLeaderboard();
+                showSection('dashboard');
+            }
+            
+        } catch(loginError) {
+            console.error("Login error:", loginError);
+            alert("Login failed: " + loginError.message + "\n\nPlease make sure you have registered and are using the correct password.");
         }
     }
-}
 
     function payFee(item, amount) {
         if (!currentUserData) return;
@@ -708,25 +730,25 @@
         window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    function copyReferralLink() {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const link = `${baseUrl}?ref=${currentUserData.referralCode}`;
-        const input = document.getElementById('referralLinkInput');
-        input.value = link;
-        input.select();
-        document.execCommand('copy');
-        alert('Referral link copied');
-    }
-    
-    function copyRefLink() {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const link = `${baseUrl}?ref=${currentUserData.referralCode}`;
-        const input = document.getElementById('refLinkDisplayField');
-        input.value = link;
-        input.select();
-        document.execCommand('copy');
-        alert('Referral link copied');
-    }
+ function copyReferralLink() {
+    const baseUrl = window.location.origin;
+    const link = `${baseUrl}/referral.html/${currentUserData.referralCode}`;
+    const input = document.getElementById('referralLinkInput');
+    input.value = link;
+    input.select();
+    document.execCommand('copy');
+    alert('Referral link copied: ' + link);
+}
+
+function copyRefLink() {
+    const baseUrl = window.location.origin;
+    const link = `${baseUrl}/referral.html/${currentUserData.referralCode}`;
+    const input = document.getElementById('refLinkDisplayField');
+    input.value = link;
+    input.select();
+    document.execCommand('copy');
+    alert('Referral link copied: ' + link);
+}
 
     function updateLivePreview() {
         const frameCode = document.getElementById('frameEditorTextarea').value;
@@ -735,9 +757,7 @@
         let previewHtml = frameCode;
         if (previewHtml && previewHtml.includes('{{photo}}')) {
             previewHtml = previewHtml.replace(/{{photo}}/g, photoUrl);
-        } else if (previewHtml) {
-            previewHtml = previewHtml;
-        } else {
+        } else if (!previewHtml) {
             previewHtml = `<div class="thick-frame"><img src="${photoUrl}" class="w-full h-full rounded-full object-cover"></div>`;
         }
         
@@ -782,6 +802,17 @@
                 logout();
                 return;
             }
+            
+            const assignments = currentUserData.assignments || [];
+            const currentComputedProgress = computeOverallProgress(assignments, currentUserData.stage || 1);
+            
+            if (Math.abs((currentUserData.progress || 0) - currentComputedProgress) > 0.01) {
+                await db.collection('users').doc(auth.currentUser.uid).update({
+                    progress: currentComputedProgress
+                });
+                currentUserData.progress = currentComputedProgress;
+            }
+            
             updateUI();
         }
     }
@@ -852,9 +883,23 @@
             frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
         }
         
+        updateStageIndicators(currentUserData.stage || 1);
         loadGrades();
         loadBroadcastMessages();
         loadMarketProducts();
+    }
+
+    function updateStageIndicators(currentActiveStage) {
+        const stageIndicators = document.getElementById('stageIndicators');
+        if (stageIndicators) {
+            stageIndicators.innerHTML = '';
+            for (let i = 1; i <= 11; i++) {
+                const div = document.createElement('div');
+                div.className = i === parseInt(currentActiveStage) ? 'bg-purple-600 rounded-lg p-2 w-10 text-center text-sm font-bold text-white' : 'bg-slate-800 rounded-lg p-2 w-10 text-center text-sm text-slate-400';
+                div.innerText = i;
+                stageIndicators.appendChild(div);
+            }
+        }
     }
 
     async function loadGrades() {
@@ -866,8 +911,11 @@
             else if (a.score >= 60) grade = 'B';
             else if (a.score >= 40) grade = 'C';
             html += `<div class="bg-slate-800 rounded-xl p-3 flex justify-between items-center">
-                        <div><span class="font-bold text-white">${a.title}</span><p class="text-slate-400 text-xs">Score: ${a.score}% (${grade})</p></div>
-                        <div class="text-yellow-400 text-sm">+${a.coinsEarned} coins</div>
+                        <div>
+                            <span class="font-bold text-white">${a.title}</span>
+                            <p class="text-slate-400 text-xs">Score: ${a.score}% (${grade}) | Stage: ${a.stage || 1}</p>
+                        </div>
+                        <div class="text-yellow-400 text-sm">+${a.coinsEarned || 0} coins</div>
                     </div>`;
         });
         document.getElementById('assignmentsListContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No assignments yet</p>';
@@ -1019,29 +1067,39 @@
                 livePreviewTimeout = setTimeout(updateLivePreview, 300);
             });
         }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        if (refCode) {
+            localStorage.setItem('coddeeyReferralCode', refCode.toUpperCase());
+        }
     });
 
     auth.onAuthStateChanged(async (user) => {
         if (user) {
-            document.getElementById('landingPage').classList.add('hidden');
-            document.getElementById('registrationPage').classList.add('hidden');
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            await loadUserData();
-            await loadMiniLeaderboard();
-            showSection('dashboard');
+            const doc = await db.collection('users').doc(user.uid).get();
+            if (doc.exists) {
+                document.getElementById('landingPage').classList.add('hidden');
+                document.getElementById('registrationPage').classList.add('hidden');
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                await loadUserData();
+                await loadMiniLeaderboard();
+                showSection('dashboard');
+            } else {
+                await auth.signOut();
+                goBack();
+            }
         } else {
-            document.getElementById('mainApp').classList.add('hidden');
-            goBack();
+            const isRegActive = !document.getElementById('registrationPage').classList.contains('hidden');
+            const isLoginActive = !document.getElementById('loginPage').classList.contains('hidden');
+            
+            if (!isRegActive && !isLoginActive) {
+                document.getElementById('mainApp').classList.add('hidden');
+                goBack();
+            }
         }
     });
-
-    for (let i = 1; i <= 11; i++) {
-        const div = document.createElement('div');
-        div.className = i === 1 ? 'bg-purple-600 rounded-lg p-2 w-10 text-center text-sm font-bold' : 'bg-slate-800 rounded-lg p-2 w-10 text-center text-sm text-slate-600';
-        div.innerText = i;
-        document.getElementById('stageIndicators').appendChild(div);
-    }
     
     const emailField = document.getElementById('regEmail');
     if (emailField) {
@@ -1049,7 +1107,7 @@
             const email = this.value.trim();
             if (email) {
                 await checkForReferralMatch(email);
-                if (pendingReferralData && document.getElementById('registrationPage').classList.contains('hidden') === false) {
+                if (pendingReferralData && !document.getElementById('registrationPage').classList.contains('hidden')) {
                     showReferralPopup();
                 }
             }
