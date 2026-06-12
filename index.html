@@ -472,14 +472,117 @@
     }
 
     function showRegistration() {
-        document.getElementById('landingPage').classList.add('hidden');
-        document.getElementById('registrationPage').classList.remove('hidden');
-        document.getElementById('loginPage').classList.add('hidden');
+    // First, show email check popup before registration form
+    showEmailCheckPopup();
+}
+
+function showEmailCheckPopup() {
+    const modalHtml = `
+        <div id="emailCheckModal" class="modal">
+            <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500 text-center">
+                <span class="material-icons text-5xl text-purple-400 mb-4">email</span>
+                <h3 class="text-2xl font-bold text-white mb-2">Check for Referral</h3>
+                <p class="text-slate-300 mb-4">Enter your email address to check if you were invited by a friend.</p>
+                <div class="mb-6">
+                    <input type="email" id="referralCheckEmail" placeholder="Your Email Address" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white focus:border-purple-500 outline-none">
+                </div>
+                <button onclick="checkEmailAndProceed()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-4 rounded-2xl font-bold text-lg">Check & Continue</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+async function checkEmailAndProceed() {
+    const email = document.getElementById('referralCheckEmail').value.trim();
+    
+    if (!email) {
+        alert('Please enter your email address');
+        return;
+    }
+    
+    // Check if email exists in referrals collection
+    const snapshot = await db.collection('referrals').where('email', '==', email).limit(1).get();
+    
+    if (!snapshot.empty) {
+        const referralData = snapshot.docs[0].data();
+        pendingReferralData = {
+            surname: referralData.surname || '',
+            firstName: referralData.firstName || '',
+            middleName: referralData.middleName || '',
+            fullName: `${referralData.surname || ''} ${referralData.firstName || ''}`.trim(),
+            email: referralData.email,
+            referralCode: referralData.referralCode
+        };
         
-        if (pendingReferralData) {
-            showReferralPopup();
+        closeEmailCheckPopup();
+        
+        // Show confirmation popup
+        const confirmHtml = `
+            <div id="referralConfirmModal" class="modal">
+                <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500 text-center">
+                    <span class="material-icons text-5xl text-green-400 mb-4">check_circle</span>
+                    <h3 class="text-2xl font-bold text-white mb-2">Referral Found!</h3>
+                    <p class="text-slate-300 mb-4">You were invited by someone to join Coddeey.</p>
+                    <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-left">
+                        <p class="text-white"><strong>Name:</strong> ${pendingReferralData.fullName}</p>
+                        <p class="text-white"><strong>Email:</strong> ${pendingReferralData.email}</p>
+                    </div>
+                    <p class="text-slate-300 mb-6">Is this you?</p>
+                    <div class="flex gap-4">
+                        <button onclick="confirmReferralAndShowForm()" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold">Yes, that's me</button>
+                        <button onclick="rejectReferralAndShowForm()" class="flex-1 bg-red-600 py-3 rounded-2xl font-bold">No, this is not me</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', confirmHtml);
+    } else {
+        // No referral found, proceed to registration
+        closeEmailCheckPopup();
+        alert('No referral found for this email. You can still register.');
+        showRegistrationFormDirectly();
+    }
+}
+
+function closeEmailCheckPopup() {
+    const modal = document.getElementById('emailCheckModal');
+    if (modal) modal.remove();
+}
+
+function closeReferralConfirmModal() {
+    const modal = document.getElementById('referralConfirmModal');
+    if (modal) modal.remove();
+}
+
+function rejectReferralAndShowForm() {
+    closeReferralConfirmModal();
+    pendingReferralData = null;
+    showRegistrationFormDirectly();
+}
+
+function confirmReferralAndShowForm() {
+    closeReferralConfirmModal();
+    showRegistrationFormDirectly();
+}
+
+function showRegistrationFormDirectly() {
+    document.getElementById('landingPage').classList.add('hidden');
+    document.getElementById('registrationPage').classList.remove('hidden');
+    document.getElementById('loginPage').classList.add('hidden');
+    
+    // If we have pending referral data, auto-fill the form
+    if (pendingReferralData) {
+        document.getElementById('regSurname').value = pendingReferralData.surname || '';
+        document.getElementById('regFirstName').value = pendingReferralData.firstName || '';
+        document.getElementById('regMiddleName').value = pendingReferralData.middleName || '';
+        document.getElementById('regEmail').value = pendingReferralData.email || '';
+        if (pendingReferralData.referralCode) {
+            document.getElementById('regReferralCode').value = pendingReferralData.referralCode;
         }
     }
+}
 
     function showLogin() {
         document.getElementById('landingPage').classList.add('hidden');
