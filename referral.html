@@ -16,12 +16,14 @@
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen">
 
 <div class="container mx-auto px-4 py-16 max-w-5xl">
+    <!-- Logo and Title -->
     <div class="text-center mb-12">
         <img src="https://i.imgur.com/wquDcTC.png" alt="Coddeey Logo" class="w-48 mx-auto mb-8">
         <h1 class="text-5xl font-bold text-white mb-4">Start Your Coding Journey</h1>
         <p class="text-xl text-slate-300">Learn to code from scratch with expert guidance</p>
     </div>
 
+    <!-- What You'll Learn -->
     <div class="grid md:grid-cols-2 gap-8 mb-12">
         <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10">
             <div class="flex items-center gap-2 mb-4">
@@ -51,6 +53,7 @@
         </div>
     </div>
 
+    <!-- Rewards Section -->
     <div class="grid md:grid-cols-3 gap-6 mb-12">
         <div class="bg-purple-600/20 rounded-2xl p-6 text-center border border-purple-500">
             <span class="material-icons text-4xl text-purple-400 mb-2">trending_up</span>
@@ -69,17 +72,18 @@
         </div>
     </div>
 
+    <!-- Referral Info Form -->
     <div class="bg-slate-800/50 rounded-3xl p-8 border border-white/10 text-center mb-8">
         <div class="flex items-center justify-center gap-2 mb-4">
             <span class="material-icons text-purple-400">person_add</span>
             <h2 class="text-2xl font-bold text-white">Enter Your Information</h2>
         </div>
-        <p class="text-slate-300 mb-6">Please provide your details to continue</p>
+        <p class="text-slate-300 mb-6">A friend invited you to join Coddeey. Enter your details to get started.</p>
         
         <div class="max-w-md mx-auto">
             <input type="text" id="referralSurname" placeholder="Surname" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
             <input type="text" id="referralFirstName" placeholder="First Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
-            <input type="text" id="referralMiddleName" placeholder="Middle Name" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
+            <input type="text" id="referralMiddleName" placeholder="Middle Name (Optional)" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-4 focus:border-purple-500 outline-none">
             <input type="email" id="referralEmail" placeholder="Email Address" class="w-full bg-slate-700 border border-slate-600 rounded-2xl px-6 py-4 text-white mb-6 focus:border-purple-500 outline-none">
             
             <button onclick="saveReferralInfo()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg hover:scale-105 transition">
@@ -98,6 +102,7 @@
                 Open Google Form
             </a>
             <p class="text-slate-400 text-sm mt-6">After submitting the form, you will be contacted via WhatsApp</p>
+            <p class="text-slate-500 text-xs mt-4">When you later register on our student portal with the same email, your information will be auto-filled.</p>
         </div>
     </div>
 
@@ -119,21 +124,29 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // Get referral code from URL - the code after /referral.html/
+    // Example: https://yourdomain.com/referral.html/ABC123
     const urlPath = window.location.pathname;
-    const refCode = urlPath.split('/').pop();
+    let referralCodeFromUrl = urlPath.split('/').pop();
     
+    // Also check for ?ref= parameter
     const urlParams = new URLSearchParams(window.location.search);
     const queryRef = urlParams.get('ref');
     
-    const finalRefCode = refCode || queryRef;
+    if (queryRef) {
+        referralCodeFromUrl = queryRef;
+    }
     
-    if (finalRefCode && finalRefCode.length > 0 && finalRefCode !== 'referral.html') {
-        localStorage.setItem('coddeeyReferralCode', finalRefCode);
+    // Save referral code to localStorage so index.html can use it later
+    if (referralCodeFromUrl && referralCodeFromUrl.length > 0 && referralCodeFromUrl !== 'referral.html') {
+        localStorage.setItem('coddeeyReferralCode', referralCodeFromUrl);
         
+        // Track the click for analytics
         db.collection('referralClicks').add({
-            referralCode: finalRefCode,
+            referralCode: referralCodeFromUrl,
             timestamp: new Date(),
-            userAgent: navigator.userAgent
+            userAgent: navigator.userAgent,
+            pageUrl: window.location.href
         }).catch(function(e) { console.log('Click tracked'); });
     }
     
@@ -161,6 +174,7 @@
         const refCode = localStorage.getItem('coddeeyReferralCode');
         
         try {
+            // Save to Firestore referrals collection
             await db.collection('referrals').add({
                 surname: surname,
                 firstName: firstName,
@@ -171,6 +185,7 @@
                 timestamp: new Date()
             });
             
+            // Also save to localStorage for immediate use
             localStorage.setItem('coddeeyReferralUserData', JSON.stringify({
                 surname: surname,
                 firstName: firstName,
@@ -179,6 +194,7 @@
                 email: email
             }));
             
+            // Show the Google Form section
             document.getElementById('googleFormSection').classList.remove('hidden');
             
             alert('Information saved successfully! You can now proceed to the Google Form.');
