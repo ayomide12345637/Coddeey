@@ -634,44 +634,73 @@
     });
 
     async function doLogin() {
-        const cod = document.getElementById('loginCod').value.trim().toUpperCase();
-        const enteredSurname = document.getElementById('loginSurname').value.trim().toUpperCase();
+    const codInput = document.getElementById('loginCod').value.trim().toUpperCase();
+    const enteredSurnameInput = document.getElementById('loginSurname').value.trim();
+
+    if (!codInput || !enteredSurnameInput) {
+        alert("Please enter both COD Number and Surname.");
+        return;
+    }
+
+    try {
+        const querySnapshot = await db.collection('users').where('cod', '==', codInput).get();
+
+        if (querySnapshot.empty) {
+            alert("COD not found. Please register first.");
+            return;
+        }
+
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+
+        const storedSurname = (userData.surname || "").trim().toUpperCase();
+        const enteredSurname = enteredSurnameInput.trim().toUpperCase();
+
+        console.log("🔍 Login Debug:", {
+            cod: codInput,
+            enteredSurnameRaw: enteredSurnameInput,
+            storedSurnameRaw: userData.surname,
+            enteredUpper: enteredSurname,
+            storedUpper: storedSurname,
+            emailFromDB: userData.email,
+            codFromDB: userData.cod
+        });
+
+        if (storedSurname !== enteredSurname) {
+            alert(`❌ Invalid surname!\n\nYou entered: "\( {enteredSurnameInput}"\nRegistered: " \){userData.surname}"`);
+            return;
+        }
+
+        // Try to login
+        const email = userData.email;
+        const password = enteredSurname;
+
+        console.log("Attempting login with:", { email, passwordLength: password.length });
+
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+
+        console.log("✅ Firebase Auth Success!", userCredential.user.uid);
+
+        alert("✅ Login successful!");
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
         
-        try {
-            const usersRef = db.collection('users');
-            const querySnapshot = await usersRef.where('cod', '==', cod).get();
-            
-            if (querySnapshot.empty) {
-                alert("COD not found. Please check your COD number.");
-                return;
-            }
-            
-            const userDoc = querySnapshot.docs[0];
-            const userData = userDoc.data();
-            
-            if (userData.surname.toUpperCase() !== enteredSurname) {
-                alert("Invalid surname. Please check and try again.");
-                return;
-            }
-            
-            const email = userData.email;
-            const password = enteredSurname;
-            
-            const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            
-            if (userCredential.user) {
-                alert("Login successful!");
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                await loadUserData();
-                await loadMiniLeaderboard();
-                showSection('dashboard');
-            }
-        } catch(error) {
-            console.error("Login error:", error);
-            alert("Login failed: " + error.message);
+        await loadUserData();
+        await loadMiniLeaderboard();
+        showSection('dashboard');
+
+    } catch (error) {
+        console.error("❌ Full Login Error:", error);
+        console.error("Error Code:", error.code);
+        console.error("Error Message:", error.message);
+
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+            alert("❌ Login failed: Wrong email or password.\n\nThis usually happens if:\n1. You didn't complete registration, or\n2. There was an error during registration.\n\nPlease register a new account and try again.");
+        } else {
+            alert("Login error: " + error.message);
         }
     }
+}
 
     function payFee(item, amount) {
         if (!currentUserData) return;
