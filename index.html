@@ -732,7 +732,7 @@
 
  function copyReferralLink() {
     const baseUrl = window.location.origin;
-    const link = `${baseUrl}/referral.html/${currentUserData.referralCode}`;
+    const link = `${baseUrl}/referral.html?ref=${currentUserData.referralCode}`;
     const input = document.getElementById('referralLinkInput');
     input.value = link;
     input.select();
@@ -742,7 +742,7 @@
 
 function copyRefLink() {
     const baseUrl = window.location.origin;
-    const link = `${baseUrl}/referral.html/${currentUserData.referralCode}`;
+    const link = `${baseUrl}/referral.html?ref=${currentUserData.referralCode}`;
     const input = document.getElementById('refLinkDisplayField');
     input.value = link;
     input.select();
