@@ -626,7 +626,6 @@
             localStorage.removeItem('coddeeyReferralCode');
             pendingReferralData = null;
             
-            await auth.signOut();
             alert(`Registration Successful\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login with these details.`);
             showLogin();
         } catch(error) {
@@ -636,17 +635,40 @@
 
     async function doLogin() {
         const cod = document.getElementById('loginCod').value.trim().toUpperCase();
-        const surname = document.getElementById('loginSurname').value.trim().toUpperCase();
+        const enteredSurname = document.getElementById('loginSurname').value.trim().toUpperCase();
         
         try {
-            const snapshot = await db.collection('users').where('cod', '==', cod).get();
-            if (snapshot.empty) throw new Error("COD not found");
+            const usersRef = db.collection('users');
+            const querySnapshot = await usersRef.where('cod', '==', cod).get();
             
-            const userData = snapshot.docs[0].data();
-            if (userData.surname.toUpperCase() !== surname) throw new Error("Invalid surname");
+            if (querySnapshot.empty) {
+                alert("COD not found. Please check your COD number.");
+                return;
+            }
             
-            await auth.signInWithEmailAndPassword(userData.email, userData.surname.toUpperCase());
+            const userDoc = querySnapshot.docs[0];
+            const userData = userDoc.data();
+            
+            if (userData.surname.toUpperCase() !== enteredSurname) {
+                alert("Invalid surname. Please check and try again.");
+                return;
+            }
+            
+            const email = userData.email;
+            const password = enteredSurname;
+            
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            
+            if (userCredential.user) {
+                alert("Login successful!");
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                await loadUserData();
+                await loadMiniLeaderboard();
+                showSection('dashboard');
+            }
         } catch(error) {
+            console.error("Login error:", error);
             alert("Login failed: " + error.message);
         }
     }
@@ -953,8 +975,11 @@
     }
 
     function logout() {
-        auth.signOut();
-        location.reload();
+        auth.signOut().then(() => {
+            location.reload();
+        }).catch((error) => {
+            console.error("Logout error:", error);
+        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
