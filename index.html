@@ -2010,6 +2010,10 @@ function showReferralClaimPopup(referrals, totalCoins) {
                           </div>`;
     });
     
+    // Store referral IDs in a global variable for the button click
+    window.pendingReferralIds = referrals.map(r => r.id);
+    window.pendingTotalCoins = totalCoins;
+    
     const modalHtml = `
         <div id="referralClaimModal" class="modal">
             <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500">
@@ -2030,7 +2034,7 @@ function showReferralClaimPopup(referrals, totalCoins) {
                 </div>
                 
                 <div class="flex gap-4">
-                    <button onclick="claimPaidReferralRewards(${totalCoins}, ${JSON.stringify(referrals.map(r => r.id))})" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold hover:bg-green-700 transition">
+                    <button onclick="claimPaidReferralRewards()" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold hover:bg-green-700 transition">
                         Yes, Claim Now
                     </button>
                     <button onclick="closeReferralClaimPopup()" class="flex-1 bg-red-600 py-3 rounded-2xl font-bold hover:bg-red-700 transition">
@@ -2043,8 +2047,17 @@ function showReferralClaimPopup(referrals, totalCoins) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-async function claimPaidReferralRewards(totalCoins, referralIds) {
+async function claimPaidReferralRewards() {
     try {
+        const totalCoins = window.pendingTotalCoins;
+        const referralIds = window.pendingReferralIds;
+        
+        if (!referralIds || referralIds.length === 0) {
+            alert("No referrals to claim.");
+            closeReferralClaimPopup();
+            return;
+        }
+        
         // Add coins to user
         await db.collection('users').doc(auth.currentUser.uid).update({
             coins: firebase.firestore.FieldValue.increment(totalCoins),
@@ -2076,6 +2089,10 @@ async function claimPaidReferralRewards(totalCoins, referralIds) {
         
         alert(`✅ You claimed ${totalCoins} coins! Check your Messages section.`);
         closeReferralClaimPopup();
+        
+        // Clear global variables
+        delete window.pendingReferralIds;
+        delete window.pendingTotalCoins;
         
     } catch(error) {
         console.error("Error claiming rewards:", error);
