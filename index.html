@@ -754,80 +754,98 @@
     }
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+    e.preventDefault();
+    
+    if (isRegistering) {
+        alert("Registration in progress. Please wait...");
+        return;
+    }
+    
+    const submitBtn = document.getElementById('registerSubmitBtn');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = "Processing... Please wait";
+    submitBtn.disabled = true;
+    isRegistering = true;
+    
+    try {
+        const surname = document.getElementById('regSurname').value.trim();
+        const firstName = document.getElementById('regFirstName').value.trim();
+        const middleName = document.getElementById('regMiddleName').value.trim() || "";
+        const email = document.getElementById('regEmail').value.trim();
+        const password = surname.toUpperCase();
+        const dob = document.getElementById('regDob').value;
+        const year = dob ? dob.slice(0, 4) : "2024";
+        const codFirstName = firstName.slice(0, 3).toUpperCase();
+        const codSurname = surname[0].toUpperCase();
+        const cod = `${codFirstName}${codSurname}/${year}`;
+        const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
         
-        if (isRegistering) {
-            alert("Registration in progress. Please wait...");
-            return;
+        let referredBy = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        let urlReferralCode = urlParams.get('ref');
+        if (!urlReferralCode) {
+            const storedRef = localStorage.getItem('coddeeyReferralCode');
+            if (storedRef) urlReferralCode = storedRef;
+        }
+        if (!urlReferralCode) {
+            const inputRefCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
+            if (inputRefCode) urlReferralCode = inputRefCode;
+        }
+        if (urlReferralCode) {
+            const referrerQuery = await db.collection('users').where('referralCode', '==', urlReferralCode.toUpperCase()).get();
+            if (!referrerQuery.empty) {
+                referredBy = referrerQuery.docs[0].id;
+            }
         }
         
-        const submitBtn = document.getElementById('registerSubmitBtn');
-        const originalText = submitBtn.innerText;
-        submitBtn.innerText = "Processing... Please wait";
-        submitBtn.disabled = true;
-        isRegistering = true;
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
         
-        try {
-            const surname = document.getElementById('regSurname').value.trim();
-            const firstName = document.getElementById('regFirstName').value.trim();
-            const middleName = document.getElementById('regMiddleName').value.trim() || "";
-            const email = document.getElementById('regEmail').value.trim();
-            const password = surname.toUpperCase();
-            const dob = document.getElementById('regDob').value;
-            const year = dob ? dob.slice(0, 4) : "2024";
-            const codFirstName = firstName.slice(0, 3).toUpperCase();
-            const codSurname = surname[0].toUpperCase();
-            const cod = `${codFirstName}${codSurname}/${year}`;
-            const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
-            
-            let referredBy = null;
-            const urlParams = new URLSearchParams(window.location.search);
-            let urlReferralCode = urlParams.get('ref');
-            if (!urlReferralCode) {
-                const storedRef = localStorage.getItem('coddeeyReferralCode');
-                if (storedRef) urlReferralCode = storedRef;
+        // FIRST: Create the user document
+        await db.collection('users').doc(userCred.user.uid).set({
+            uid: userCred.user.uid, surname, firstName, middleName,
+            fullName: `${surname} ${firstName} ${middleName}`.trim(),
+            email, cod, referralCode, referredBy, referralRewarded: false,
+            photoUrl: document.getElementById('regPhotoUrl').value,
+            phone: document.getElementById('regPhone').value,
+            gender: document.getElementById('regGender').value, dob,
+            stage: 1, progress: 0, coins: 10, referralsCount: 0,
+            formFeePaid: false, acceptanceFeePaid: false, fullPayment: false,
+            lastTuitionPaidDate: null, tuitionPaidUntil: null,
+            assignments: [], suspended: false,
+            directMessages: [],
+            frameCode: '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>',
+            createdAt: new Date(),
+            // ADD THESE TWO LINES:
+            regSchedule: document.getElementById('regSchedule').value,
+            regHearAbout: document.getElementById('regHearAbout').value
+        });
+        
+        // SECOND: Award coins to referrer (if any)
+        if (referredBy) {
+            const referrerDoc = await db.collection('users').doc(referredBy).get();
+            if (referrerDoc.exists) {
+                await db.collection('users').doc(referredBy).update({
+                    coins: firebase.firestore.FieldValue.increment(10),
+                    referralsCount: firebase.firestore.FieldValue.increment(1)
+                });
+                console.log(`Awarded 10 coins to referrer: ${referredBy}`);
             }
-            if (!urlReferralCode) {
-                const inputRefCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
-                if (inputRefCode) urlReferralCode = inputRefCode;
-            }
-            if (urlReferralCode) {
-                const referrerQuery = await db.collection('users').where('referralCode', '==', urlReferralCode.toUpperCase()).get();
-                if (!referrerQuery.empty) {
-                    referredBy = referrerQuery.docs[0].id;
-                }
-            }
-            
-            const userCred = await auth.createUserWithEmailAndPassword(email, password);
-            await db.collection('users').doc(userCred.user.uid).set({
-                uid: userCred.user.uid, surname, firstName, middleName,
-                fullName: `${surname} ${firstName} ${middleName}`.trim(),
-                email, cod, referralCode, referredBy, referralRewarded: false,
-                photoUrl: document.getElementById('regPhotoUrl').value,
-                phone: document.getElementById('regPhone').value,
-                gender: document.getElementById('regGender').value, dob,
-                stage: 1, progress: 0, coins: 10, referralsCount: 0,
-                formFeePaid: false, acceptanceFeePaid: false, fullPayment: false,
-                lastTuitionPaidDate: null, tuitionPaidUntil: null,
-                assignments: [], suspended: false,
-                directMessages: [],
-                frameCode: '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>',
-                createdAt: new Date()
-            });
-            localStorage.removeItem('coddeeyReferralCode');
-            pendingReferralData = null;
-            alert(`Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login using these details now.`);
-            await auth.signOut();
-            document.getElementById('registrationPage').classList.add('hidden');
-            showLogin();
-        } catch(error) {
-            alert("Registration Error: " + error.message);
-        } finally {
-            submitBtn.innerText = originalText;
-            submitBtn.disabled = false;
-            isRegistering = false;
         }
-    });
+        
+        localStorage.removeItem('coddeeyReferralCode');
+        pendingReferralData = null;
+        alert(`Registration Successful!\n\nCOD Number: ${cod}\nPassword: ${password}\n\nPlease login using these details now.`);
+        await auth.signOut();
+        document.getElementById('registrationPage').classList.add('hidden');
+        showLogin();
+    } catch(error) {
+        alert("Registration Error: " + error.message);
+    } finally {
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+        isRegistering = false;
+    }
+});
 
     async function payFormFee() {
         if(!currentUserData) return;
@@ -1023,7 +1041,113 @@
             }
         }
     }
+async function checkAndPromptOldUsers() {
+    if (!currentUserData) return;
+    
+    console.log("===== CHECKING USER DATA =====");
+    console.log("regSchedule:", currentUserData.regSchedule);
+    console.log("regHearAbout:", currentUserData.regHearAbout);
+    
+    // Check if missing schedule (undefined, null, empty, or placeholder)
+    const hasSchedule = currentUserData.regSchedule && 
+                        currentUserData.regSchedule !== 'Preferred Class Schedule' &&
+                        currentUserData.regSchedule !== 'Not set' &&
+                        currentUserData.regSchedule !== '';
+    
+    // Check if missing heard from
+    const hasHeard = currentUserData.regHearAbout && 
+                     currentUserData.regHearAbout !== 'How did you hear about us?' &&
+                     currentUserData.regHearAbout !== 'Not set' &&
+                     currentUserData.regHearAbout !== '';
+    
+    console.log("hasSchedule:", hasSchedule);
+    console.log("hasHeard:", hasHeard);
+    
+    if (!hasSchedule || !hasHeard) {
+        console.log("Showing popup - missing data");
+        // Show popup after 2 seconds
+        setTimeout(() => {
+            showMissingDataPopup(!hasSchedule, !hasHeard);
+        }, 2000);
+    } else {
+        console.log("User has all data, no popup needed");
+    }
+}
+function showMissingDataPopup(needSchedule, needHeard) {
+    const modalHtml = `
+        <div id="updateProfileModal" class="modal">
+            <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500">
+                <div class="text-center mb-6">
+                    <span class="material-icons text-5xl text-purple-400">person</span>
+                    <h3 class="text-2xl font-bold text-white mt-2">Complete Your Profile</h3>
+                    <p class="text-slate-300 text-sm mt-2">Please help us serve you better</p>
+                </div>
+                
+                <div class="space-y-4">
+                    ${needSchedule ? `
+                    <div>
+                        <label class="text-white text-sm mb-2 block">Preferred Tutorial Time</label>
+                        <select id="popupSchedule" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 text-white">
+                            <option value="">Select Preferred Time</option>
+                            <option value="Morning">Morning</option>
+                            <option value="Afternoon">Afternoon</option>
+                            <option value="Evening">Evening</option>
+                        </select>
+                    </div>
+                    ` : ''}
+                    
+                    ${needHeard ? `
+                    <div>
+                        <label class="text-white text-sm mb-2 block">How did you hear about us?</label>
+                        <select id="popupHeard" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 text-white">
+                            <option value="">Select an option</option>
+                            <option value="Friends">Friends</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="X (Twitter)">X (Twitter)</option>
+                            <option value="Google Search">Google Search</option>
+                            <option value="YouTube">YouTube</option>
+                        </select>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <button onclick="saveMissingData()" class="w-full mt-6 bg-purple-600 py-3 rounded-2xl font-bold text-white">Save Information</button>
+                <button onclick="closeMissingDataPopup()" class="w-full mt-3 text-slate-400 text-sm hover:text-white">Skip for now</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
 
+async function saveMissingData() {
+    const updates = {};
+    
+    const schedule = document.getElementById('popupSchedule');
+    if (schedule && schedule.value) {
+        updates.regSchedule = schedule.value;
+    }
+    
+    const heard = document.getElementById('popupHeard');
+    if (heard && heard.value) {
+        updates.regHearAbout = heard.value;
+    }
+    
+    if (Object.keys(updates).length > 0) {
+        await db.collection('users').doc(auth.currentUser.uid).update(updates);
+        await loadUserData();
+        alert('Thank you! Your profile has been updated.');
+    }
+    
+    closeMissingDataPopup();
+}
+
+function closeMissingDataPopup() {
+    const modal = document.getElementById('updateProfileModal');
+    if (modal) modal.remove();
+}
     async function sendTuitionWarningMessage(daysOverdue) {
         if(!currentUserData) return;
         const warningText = `TUITION REMINDER: Your tuition fee of N1,000 is ${daysOverdue} days overdue. Pay within ${5-daysOverdue} days to avoid account suspension.`;
@@ -1160,6 +1284,7 @@
             updateDeadlineAndCountdown();
             await sendAutoWarningMessage();
             await refreshNotificationBadge();
+           await checkAndPromptOldUsers();
         }
     }
 
