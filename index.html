@@ -79,7 +79,6 @@
             backdrop-filter: blur(8px);
         }
         
-        /* Leaderboard and chat avatar containers */
         .leaderboard-avatar, .chat-avatar {
             width: 32px;
             height: 32px;
@@ -94,14 +93,12 @@
             overflow: hidden;
         }
         
-        /* Ensure custom frames don't overflow */
         [class*="frame"] img {
             max-width: 100%;
             max-height: 100%;
             object-fit: cover;
         }
         
-        /* Notification dot animation */
         .notification-dot {
             animation: pulse 1.5s infinite;
         }
@@ -111,20 +108,19 @@
             50% { opacity: 0.5; }
         }
         
-        /* Notification Bell & Drawer */
-.bell-container { position: relative; cursor: pointer; }
-.bell-badge { position: absolute; top: -5px; right: -8px; background-color: #ef4444; color: white; border-radius: 50%; min-width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; padding: 0 4px; animation: pulse 1.2s infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; transform: scale(1.1); } }
-
-.notification-drawer { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: #0f172a; backdrop-filter: blur(20px); border-left: 1px solid rgba(139, 92, 246, 0.3); z-index: 1000; transition: right 0.3s ease; display: flex; flex-direction: column; box-shadow: -5px 0 30px rgba(0,0,0,0.5); }
-.notification-drawer.open { right: 0; }
-.drawer-header { padding: 1.5rem; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-.notification-item { padding: 1rem; border-bottom: 1px solid #1e293b; transition: 0.2s; cursor: pointer; background: #1e293b; margin-bottom: 8px; border-radius: 12px; }
-.notification-item:hover { background: #2d3a4e; }
-.red-badge-bullet { background-color: #ef4444; color: white; border-radius: 20px; padding: 2px 10px; font-size: 10px; font-weight: bold; margin-left: 10px; display: inline-block; }
-
-.countdown-timer { font-family: monospace; font-weight: bold; background: #1e293b; padding: 8px 16px; border-radius: 40px; display: inline-block; font-size: 1.2rem; letter-spacing: 1px; }
-.suspension-warning { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; padding: 12px; border-radius: 12px; }
+        .bell-container { position: relative; cursor: pointer; }
+        .bell-badge { position: absolute; top: -5px; right: -8px; background-color: #ef4444; color: white; border-radius: 50%; min-width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; padding: 0 4px; animation: pulse 1.2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; transform: scale(1.1); } }
+        
+        .notification-drawer { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: #0f172a; backdrop-filter: blur(20px); border-left: 1px solid rgba(139, 92, 246, 0.3); z-index: 1000; transition: right 0.3s ease; display: flex; flex-direction: column; box-shadow: -5px 0 30px rgba(0,0,0,0.5); }
+        .notification-drawer.open { right: 0; }
+        .drawer-header { padding: 1.5rem; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+        .notification-item { padding: 1rem; border-bottom: 1px solid #1e293b; transition: 0.2s; cursor: pointer; background: #1e293b; margin-bottom: 8px; border-radius: 12px; }
+        .notification-item:hover { background: #2d3a4e; }
+        .red-badge-bullet { background-color: #ef4444; color: white; border-radius: 20px; padding: 2px 10px; font-size: 10px; font-weight: bold; margin-left: 10px; display: inline-block; }
+        
+        .countdown-timer { font-family: monospace; font-weight: bold; background: #1e293b; padding: 8px 16px; border-radius: 40px; display: inline-block; font-size: 1.2rem; letter-spacing: 1px; }
+        .suspension-warning { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; padding: 12px; border-radius: 12px; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 min-h-screen text-slate-100">
@@ -248,7 +244,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl hover:brightness-110 transition text-white">
+            <button type="submit" id="registerSubmitBtn" class="w-full py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl hover:brightness-110 transition text-white">
                 Submit Registration & Generate COD
             </button>
         </form>
@@ -269,12 +265,12 @@
 <div id="mainApp" class="hidden">
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
     <div id="notificationDrawer" class="notification-drawer">
-    <div class="drawer-header">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2"><span class="material-icons">notifications</span> Notification Center</h2>
-        <button onclick="closeNotificationDrawer()" class="text-slate-400 hover:text-white"><span class="material-icons">close</span></button>
+        <div class="drawer-header">
+            <h2 class="text-xl font-bold text-white flex items-center gap-2"><span class="material-icons">notifications</span> Notification Center</h2>
+            <button onclick="closeNotificationDrawer()" class="text-slate-400 hover:text-white"><span class="material-icons">close</span></button>
+        </div>
+        <div id="drawerNotificationsList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
     </div>
-    <div id="drawerNotificationsList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-</div>
     <div class="flex min-h-screen">
         <div id="sidebar" class="fixed lg:relative w-72 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 h-screen overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-all duration-300 z-50">
             <div class="p-6 text-center border-b border-white/10">
@@ -313,16 +309,16 @@
         <div class="flex-1">
             <div class="bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-40">
                 <span class="material-icons text-2xl text-white lg:hidden cursor-pointer" onclick="toggleSidebar()">menu</span>
-               <div class="flex items-center gap-5">
-    <div class="bell-container" onclick="openNotificationDrawer()">
-        <span class="material-icons text-3xl text-white hover:text-purple-300 transition">notifications</span>
-        <span id="globalBellBadge" class="bell-badge hidden">0</span>
-    </div>
-    <span id="topUserName" class="text-white hidden sm:inline"></span>
-    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
-        <img id="topProfileImg" src="" class="w-full h-full object-cover">
-    </div>
-</div>
+                <div class="flex items-center gap-5">
+                    <div class="bell-container" onclick="openNotificationDrawer()">
+                        <span class="material-icons text-3xl text-white hover:text-purple-300 transition">notifications</span>
+                        <span id="globalBellBadge" class="bell-badge hidden">0</span>
+                    </div>
+                    <span id="topUserName" class="text-white hidden sm:inline"></span>
+                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
+                        <img id="topProfileImg" src="" class="w-full h-full object-cover">
+                    </div>
+                </div>
             </div>
 
             <div class="p-6">
@@ -363,67 +359,59 @@
                 </div>
 
                 <div id="feesSection" class="section">
-    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-        <h2 class="text-xl font-bold text-white mb-4">Fee Payment</h2>
-        
-        <!-- Fee Status Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <div id="formFeeCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-slate-700">
-                <h3 class="font-bold text-sm">Form Fee</h3>
-                <p class="text-xl text-purple-400 font-bold">N500</p>
-                <span id="formFeeStatus" class="text-xs text-red-400">UNPAID</span>
-            </div>
-            <div id="acceptanceFeeCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-slate-700">
-                <h3 class="font-bold text-sm">Acceptance Fee</h3>
-                <p class="text-xl text-purple-400 font-bold">N1,000</p>
-                <span id="acceptanceFeeStatus" class="text-xs text-red-400">UNPAID</span>
-            </div>
-            <div id="tuitionFeeCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-slate-700">
-                <h3 class="font-bold text-sm">Tuition Fee</h3>
-                <p class="text-xl text-purple-400 font-bold">N1,000</p>
-                <span id="tuitionFeeStatus" class="text-xs text-red-400">UNPAID</span>
-                <div id="tuitionDueDate" class="text-xs text-slate-400 mt-1 hidden"></div>
-            </div>
-            <div id="fullPaymentCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-purple-500">
-                <h3 class="font-bold text-sm">Full Payment</h3>
-                <p class="text-xl text-purple-400 font-bold">N2,500</p>
-                <span id="fullPaymentStatus" class="text-xs text-yellow-400">BUNDLE</span>
-            </div>
-        </div>
-        
-        <!-- Payment Buttons -->
-        <div class="flex flex-wrap gap-3 mb-6">
-            <button onclick="payFormFee()" id="payFormBtn" class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700">Pay Form Fee (N500)</button>
-            <button onclick="payAcceptanceFee()" id="payAcceptanceBtn" class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700">Pay Acceptance (N1,000)</button>
-            <button onclick="payTuitionFee()" id="payTuitionBtn" class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700">Pay Tuition (N1,000)</button>
-            <button onclick="payFullPayment()" id="payFullBtn" class="bg-purple-600 px-5 py-2 rounded-xl hover:bg-purple-700">Pay All (N2,500)</button>
-        </div>
-        
-        <!-- Countdown Timer Panel -->
-        <div id="deadlineTimerPanel" class="bg-slate-800 p-4 rounded-xl mt-4">
-            <h3 class="font-semibold mb-2">Payment Deadline Tracker</h3>
-            <div id="countdownDisplay" class="countdown-timer text-purple-400 my-2 text-center">--</div>
-            <div id="paymentStatusMsg" class="text-sm text-slate-300 mt-2 text-center"></div>
-            <div id="suspensionWarningMsg" class="suspension-warning mt-3 hidden text-center">WARNING: Deadline approaching! Account will be suspended.</div>
-        </div>
-        
-        <!-- Tuition Recurring Info -->
-        <div id="tuitionRecurringInfo" class="bg-slate-800/50 p-3 rounded-xl mt-4 text-xs text-slate-400 text-center hidden">
-            Tuition fee recurs every 30 days from account creation or last tuition payment.
-        </div>
-    </div>
-</div>
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4">Fee Payment</h2>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                            <div id="formFeeCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-slate-700">
+                                <h3 class="font-bold text-sm">Form Fee</h3>
+                                <p class="text-xl text-purple-400 font-bold">N500</p>
+                                <span id="formFeeStatus" class="text-xs text-red-400">UNPAID</span>
+                            </div>
+                            <div id="acceptanceFeeCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-slate-700">
+                                <h3 class="font-bold text-sm">Acceptance Fee</h3>
+                                <p class="text-xl text-purple-400 font-bold">N1,000</p>
+                                <span id="acceptanceFeeStatus" class="text-xs text-red-400">UNPAID</span>
+                            </div>
+                            <div id="tuitionFeeCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-slate-700">
+                                <h3 class="font-bold text-sm">Tuition Fee</h3>
+                                <p class="text-xl text-purple-400 font-bold">N1,000</p>
+                                <span id="tuitionFeeStatus" class="text-xs text-red-400">UNPAID</span>
+                                <div id="tuitionDueDate" class="text-xs text-slate-400 mt-1 hidden"></div>
+                            </div>
+                            <div id="fullPaymentCard" class="bg-slate-800 rounded-xl p-3 text-center border-2 border-purple-500">
+                                <h3 class="font-bold text-sm">Full Payment</h3>
+                                <p class="text-xl text-purple-400 font-bold">N2,500</p>
+                                <span id="fullPaymentStatus" class="text-xs text-yellow-400">BUNDLE</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-3 mb-6">
+                            <button onclick="payFormFee()" id="payFormBtn" class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700">Pay Form Fee (N500)</button>
+                            <button onclick="payAcceptanceFee()" id="payAcceptanceBtn" class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700">Pay Acceptance (N1,000)</button>
+                            <button onclick="payTuitionFee()" id="payTuitionBtn" class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700">Pay Tuition (N1,000)</button>
+                            <button onclick="payFullPayment()" id="payFullBtn" class="bg-purple-600 px-5 py-2 rounded-xl hover:bg-purple-700">Pay All (N2,500)</button>
+                        </div>
+                        
+                        <div id="deadlineTimerPanel" class="bg-slate-800 p-4 rounded-xl mt-4">
+                            <h3 class="font-semibold mb-2">Payment Deadline Tracker</h3>
+                            <div id="countdownDisplay" class="countdown-timer text-purple-400 my-2 text-center">--</div>
+                            <div id="paymentStatusMsg" class="text-sm text-slate-300 mt-2 text-center"></div>
+                            <div id="suspensionWarningMsg" class="suspension-warning mt-3 hidden text-center">WARNING: Deadline approaching! Account will be suspended.</div>
+                        </div>
+                        
+                        <div id="tuitionRecurringInfo" class="bg-slate-800/50 p-3 rounded-xl mt-4 text-xs text-slate-400 text-center hidden">
+                            Tuition fee recurs every 30 days from account creation or last tuition payment.
+                        </div>
+                    </div>
+                </div>
 
                 <div id="courseformSection" class="section">
                     <div class="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                         <h2 class="text-xl font-bold text-white mb-4">Course Registration</h2>
                         <p class="text-slate-300 mb-4">Current Stage: <span id="currentStageText" class="text-purple-400 font-bold">1</span></p>
-                        <div id="coursesList" class="space-y-2 mb-4">
-                            <div class="bg-slate-800 rounded-xl p-3">HTML & CSS Fundamentals</div>
-                            <div class="bg-slate-800 rounded-xl p-3">JavaScript Basics</div>
-                            <div class="bg-slate-800 rounded-xl p-3">Introduction to Programming</div>
-                        </div>
-                        <button onclick="alert('Registered for Stage ' + (currentUserData?.stage || 1))" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
+                        <div id="coursesList" class="space-y-2 mb-4"></div>
+                        <button onclick="registerForCurrentStage()" id="registerStageBtn" class="bg-purple-600 px-6 py-2 rounded-xl">Register for this Stage</button>
                     </div>
                 </div>
 
@@ -553,6 +541,7 @@
     let currentUserData = null;
     let livePreviewTimeout = null;
     let pendingReferralData = null;
+    let isRegistering = false;
 
     function goBack() {
         document.getElementById('landingPage').classList.remove('hidden');
@@ -767,37 +756,48 @@
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const surname = document.getElementById('regSurname').value.trim();
-        const firstName = document.getElementById('regFirstName').value.trim();
-        const middleName = document.getElementById('regMiddleName').value.trim() || "";
-        const email = document.getElementById('regEmail').value.trim();
-        const password = surname.toUpperCase();
-        const dob = document.getElementById('regDob').value;
-        const year = dob ? dob.slice(0, 4) : "2024";
-        const codFirstName = firstName.slice(0, 3).toUpperCase();
-        const codSurname = surname[0].toUpperCase();
-        const cod = `${codFirstName}${codSurname}/${year}`;
-        const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
+        if (isRegistering) {
+            alert("Registration in progress. Please wait...");
+            return;
+        }
         
-        let referredBy = null;
-        const urlParams = new URLSearchParams(window.location.search);
-        let urlReferralCode = urlParams.get('ref');
-        if (!urlReferralCode) {
-            const storedRef = localStorage.getItem('coddeeyReferralCode');
-            if (storedRef) urlReferralCode = storedRef;
-        }
-        if (!urlReferralCode) {
-            const inputRefCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
-            if (inputRefCode) urlReferralCode = inputRefCode;
-        }
-        if (urlReferralCode) {
-            const referrerQuery = await db.collection('users').where('referralCode', '==', urlReferralCode.toUpperCase()).get();
-            if (!referrerQuery.empty) {
-                referredBy = referrerQuery.docs[0].id;
-            }
-        }
+        const submitBtn = document.getElementById('registerSubmitBtn');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = "Processing... Please wait";
+        submitBtn.disabled = true;
+        isRegistering = true;
         
         try {
+            const surname = document.getElementById('regSurname').value.trim();
+            const firstName = document.getElementById('regFirstName').value.trim();
+            const middleName = document.getElementById('regMiddleName').value.trim() || "";
+            const email = document.getElementById('regEmail').value.trim();
+            const password = surname.toUpperCase();
+            const dob = document.getElementById('regDob').value;
+            const year = dob ? dob.slice(0, 4) : "2024";
+            const codFirstName = firstName.slice(0, 3).toUpperCase();
+            const codSurname = surname[0].toUpperCase();
+            const cod = `${codFirstName}${codSurname}/${year}`;
+            const referralCode = `${firstName.slice(0,3)}${Math.floor(Math.random()*90000+10000)}`.toUpperCase();
+            
+            let referredBy = null;
+            const urlParams = new URLSearchParams(window.location.search);
+            let urlReferralCode = urlParams.get('ref');
+            if (!urlReferralCode) {
+                const storedRef = localStorage.getItem('coddeeyReferralCode');
+                if (storedRef) urlReferralCode = storedRef;
+            }
+            if (!urlReferralCode) {
+                const inputRefCode = document.getElementById('regReferralCode').value.trim().toUpperCase();
+                if (inputRefCode) urlReferralCode = inputRefCode;
+            }
+            if (urlReferralCode) {
+                const referrerQuery = await db.collection('users').where('referralCode', '==', urlReferralCode.toUpperCase()).get();
+                if (!referrerQuery.empty) {
+                    referredBy = referrerQuery.docs[0].id;
+                }
+            }
+            
             const userCred = await auth.createUserWithEmailAndPassword(email, password);
             await db.collection('users').doc(userCred.user.uid).set({
                 uid: userCred.user.uid, surname, firstName, middleName,
@@ -808,8 +808,9 @@
                 gender: document.getElementById('regGender').value, dob,
                 stage: 1, progress: 0, coins: 10, referralsCount: 0,
                 formFeePaid: false, acceptanceFeePaid: false, fullPayment: false,
-lastTuitionPaidDate: null, tuitionPaidUntil: null,
+                lastTuitionPaidDate: null, tuitionPaidUntil: null,
                 assignments: [], suspended: false,
+                directMessages: [],
                 frameCode: '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>',
                 createdAt: new Date()
             });
@@ -821,228 +822,219 @@ lastTuitionPaidDate: null, tuitionPaidUntil: null,
             showLogin();
         } catch(error) {
             alert("Registration Error: " + error.message);
+        } finally {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+            isRegistering = false;
         }
     });
 
-// ========== NEW FEE PAYMENT FUNCTIONS ==========
-
-async function payFormFee() {
-    if(!currentUserData) return;
-    if(currentUserData.formFeePaid) {
-        alert("Form fee already paid.");
-        return;
-    }
-    const msg = `I want to pay FORM FEE of N500. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
-    window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
-    
-    // Store pending payment
-    localStorage.setItem('pendingFormPayment', JSON.stringify({
-        uid: auth.currentUser.uid,
-        timestamp: new Date().toISOString()
-    }));
-    alert("After payment, admin will confirm and activate your form fee.");
-}
-
-async function payAcceptanceFee() {
-    if(!currentUserData) return;
-    if(currentUserData.acceptanceFeePaid) {
-        alert("Acceptance fee already paid.");
-        return;
-    }
-    const msg = `I want to pay ACCEPTANCE FEE of N1,000. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
-    window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
-    
-    localStorage.setItem('pendingAcceptancePayment', JSON.stringify({
-        uid: auth.currentUser.uid,
-        timestamp: new Date().toISOString()
-    }));
-    alert("After payment, admin will confirm and activate your acceptance fee.");
-}
-
-async function payTuitionFee() {
-    if(!currentUserData) return;
-    if(currentUserData.fullPayment) {
-        alert("You have already made full payment. No tuition fees required.");
-        return;
-    }
-    
-    const now = new Date();
-    const newPaidUntil = new Date();
-    newPaidUntil.setDate(now.getDate() + 30);
-    
-    const msg = `I want to pay TUITION FEE of N1,000 (30 days coverage). My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
-    const confirmed = confirm(`Pay N1,000 for tuition? This will cover you for 30 days until ${newPaidUntil.toLocaleDateString()}. Click OK to proceed to WhatsApp payment.`);
-    if(confirmed) {
-        localStorage.setItem('pendingTuitionPayment', JSON.stringify({
-            uid: auth.currentUser.uid,
-            paidUntil: newPaidUntil.toISOString(),
-            timestamp: now.toISOString()
-        }));
+    async function payFormFee() {
+        if(!currentUserData) return;
+        if(currentUserData.formFeePaid) {
+            alert("Form fee already paid.");
+            return;
+        }
+        const msg = `I want to pay FORM FEE of N500. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
         window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
-        alert("After payment, admin will confirm. Your portal will update within minutes.");
+        localStorage.setItem('pendingFormPayment', JSON.stringify({
+            uid: auth.currentUser.uid,
+            timestamp: new Date().toISOString()
+        }));
+        alert("After payment, admin will confirm and activate your form fee.");
     }
-}
 
-async function payFullPayment() {
-    if(!currentUserData) return;
-    if(currentUserData.fullPayment) {
-        alert("Full payment already completed.");
-        return;
+    async function payAcceptanceFee() {
+        if(!currentUserData) return;
+        if(currentUserData.acceptanceFeePaid) {
+            alert("Acceptance fee already paid.");
+            return;
+        }
+        const msg = `I want to pay ACCEPTANCE FEE of N1,000. My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
+        window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
+        localStorage.setItem('pendingAcceptancePayment', JSON.stringify({
+            uid: auth.currentUser.uid,
+            timestamp: new Date().toISOString()
+        }));
+        alert("After payment, admin will confirm and activate your acceptance fee.");
     }
-    
-    const msg = `I want to make FULL PAYMENT of N2,500 (Form + Acceptance + Tuition). My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
-    window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
-    
-    localStorage.setItem('pendingFullPayment', JSON.stringify({
-        uid: auth.currentUser.uid,
-        timestamp: new Date().toISOString()
-    }));
-    alert("After payment, admin will confirm. Your account will be fully activated with no recurring fees.");
-}
 
-// ========== FEE STATUS UI UPDATE ==========
-async function updateFeeUI() {
-    if(!currentUserData) return;
-    
-    // Form Fee Status
-    const formPaid = currentUserData.formFeePaid === true;
-    document.getElementById('formFeeStatus').innerText = formPaid ? 'PAID' : 'UNPAID';
-    document.getElementById('formFeeStatus').className = formPaid ? 'text-xs text-green-400' : 'text-xs text-red-400';
-    document.getElementById('formFeeCard').style.borderColor = formPaid ? '#22c55e' : '#334155';
-    document.getElementById('payFormBtn').disabled = formPaid;
-    if(formPaid) document.getElementById('payFormBtn').classList.add('opacity-50', 'cursor-not-allowed');
-    
-    // Acceptance Fee Status
-    const acceptancePaid = currentUserData.acceptanceFeePaid === true;
-    document.getElementById('acceptanceFeeStatus').innerText = acceptancePaid ? 'PAID' : 'UNPAID';
-    document.getElementById('acceptanceFeeStatus').className = acceptancePaid ? 'text-xs text-green-400' : 'text-xs text-red-400';
-    document.getElementById('acceptanceFeeCard').style.borderColor = acceptancePaid ? '#22c55e' : '#334155';
-    document.getElementById('payAcceptanceBtn').disabled = acceptancePaid;
-    if(acceptancePaid) document.getElementById('payAcceptanceBtn').classList.add('opacity-50', 'cursor-not-allowed');
-    
-    // Full Payment Status
-    const fullPaid = currentUserData.fullPayment === true;
-    if(fullPaid) {
-        document.getElementById('fullPaymentStatus').innerText = 'FULLY PAID';
-        document.getElementById('fullPaymentStatus').className = 'text-xs text-green-400';
-        document.getElementById('fullPaymentCard').style.borderColor = '#22c55e';
-        document.getElementById('payFullBtn').disabled = true;
-        document.getElementById('payFullBtn').classList.add('opacity-50', 'cursor-not-allowed');
-        document.getElementById('payTuitionBtn').disabled = true;
-        document.getElementById('payTuitionBtn').classList.add('opacity-50', 'cursor-not-allowed');
-    }
-    
-    // Tuition Fee Status (recurring)
-    await updateTuitionStatus();
-}
-
-async function updateTuitionStatus() {
-    if(!currentUserData) return;
-    
-    const fullPaid = currentUserData.fullPayment === true;
-    const accountCreatedAt = currentUserData.createdAt?.toDate() || new Date();
-    const lastTuitionPaid = currentUserData.lastTuitionPaidDate?.toDate() || null;
-    const tuitionPaidUntil = currentUserData.tuitionPaidUntil?.toDate() || null;
-    const now = new Date();
-    
-    let isTuitionDue = false;
-    let daysOverdue = 0;
-    let nextDueDate = null;
-    
-    if(!fullPaid) {
-        if(!lastTuitionPaid) {
-            const daysSinceCreation = Math.floor((now - accountCreatedAt) / (1000 * 60 * 60 * 24));
-            if(daysSinceCreation >= 30) {
-                isTuitionDue = true;
-                daysOverdue = daysSinceCreation - 30;
-                nextDueDate = new Date(accountCreatedAt);
-                nextDueDate.setDate(accountCreatedAt.getDate() + 30);
-            } else {
-                nextDueDate = new Date(accountCreatedAt);
-                nextDueDate.setDate(accountCreatedAt.getDate() + 30);
-            }
-        } else {
-            if(tuitionPaidUntil && tuitionPaidUntil < now) {
-                isTuitionDue = true;
-                daysOverdue = Math.floor((now - tuitionPaidUntil) / (1000 * 60 * 60 * 24));
-                nextDueDate = new Date(tuitionPaidUntil);
-            } else if(tuitionPaidUntil) {
-                nextDueDate = new Date(tuitionPaidUntil);
-            } else {
-                nextDueDate = new Date(lastTuitionPaid);
-                nextDueDate.setDate(lastTuitionPaid.getDate() + 30);
-                if(nextDueDate < now) isTuitionDue = true;
-            }
+    async function payTuitionFee() {
+        if(!currentUserData) return;
+        if(currentUserData.fullPayment) {
+            alert("You have already made full payment. No tuition fees required.");
+            return;
+        }
+        const now = new Date();
+        const newPaidUntil = new Date();
+        newPaidUntil.setDate(now.getDate() + 30);
+        const msg = `I want to pay TUITION FEE of N1,000 (30 days coverage). My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
+        const confirmed = confirm(`Pay N1,000 for tuition? This will cover you for 30 days until ${newPaidUntil.toLocaleDateString()}. Click OK to proceed to WhatsApp payment.`);
+        if(confirmed) {
+            localStorage.setItem('pendingTuitionPayment', JSON.stringify({
+                uid: auth.currentUser.uid,
+                paidUntil: newPaidUntil.toISOString(),
+                timestamp: now.toISOString()
+            }));
+            window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
+            alert("After payment, admin will confirm. Your portal will update within minutes.");
         }
     }
-    
-    const tuitionCard = document.getElementById('tuitionFeeCard');
-    const tuitionStatusSpan = document.getElementById('tuitionFeeStatus');
-    const tuitionDueSpan = document.getElementById('tuitionDueDate');
-    const tuitionRecurringInfo = document.getElementById('tuitionRecurringInfo');
-    
-    if(fullPaid) {
-        tuitionStatusSpan.innerText = 'COVERED';
-        tuitionStatusSpan.className = 'text-xs text-green-400';
-        tuitionCard.style.borderColor = '#22c55e';
-        tuitionDueSpan.classList.add('hidden');
-        tuitionRecurringInfo.classList.add('hidden');
-    } else if(isTuitionDue) {
-        tuitionStatusSpan.innerText = `DUE (${daysOverdue} days overdue)`;
-        tuitionStatusSpan.className = 'text-xs text-red-400 font-bold';
-        tuitionCard.style.borderColor = '#ef4444';
-        tuitionDueSpan.innerHTML = `<span class="text-red-400">⚠️ Payment required now!</span>`;
-        tuitionDueSpan.classList.remove('hidden');
-        tuitionRecurringInfo.classList.remove('hidden');
-        tuitionRecurringInfo.innerHTML = `<span class="text-red-400">⚠️ Tuition fee of N1,000 is due! Please pay within 5 days to avoid suspension.</span>`;
+
+    async function payFullPayment() {
+        if(!currentUserData) return;
+        if(currentUserData.fullPayment) {
+            alert("Full payment already completed.");
+            return;
+        }
+        const msg = `I want to make FULL PAYMENT of N2,500 (Form + Acceptance + Tuition). My COD: ${currentUserData.cod}, Name: ${currentUserData.surname} ${currentUserData.firstName}`;
+        window.open(`https://wa.me/2348167914665?text=${encodeURIComponent(msg)}`, '_blank');
+        localStorage.setItem('pendingFullPayment', JSON.stringify({
+            uid: auth.currentUser.uid,
+            timestamp: new Date().toISOString()
+        }));
+        alert("After payment, admin will confirm. Your account will be fully activated with no recurring fees.");
+    }
+
+    async function updateFeeUI() {
+        if(!currentUserData) return;
         
-        if(daysOverdue === 1 || daysOverdue === 3 || daysOverdue === 5) {
-            await sendTuitionWarningMessage(daysOverdue);
+        const formPaid = currentUserData.formFeePaid === true;
+        document.getElementById('formFeeStatus').innerText = formPaid ? 'PAID' : 'UNPAID';
+        document.getElementById('formFeeStatus').className = formPaid ? 'text-xs text-green-400' : 'text-xs text-red-400';
+        document.getElementById('formFeeCard').style.borderColor = formPaid ? '#22c55e' : '#334155';
+        document.getElementById('payFormBtn').disabled = formPaid;
+        if(formPaid) document.getElementById('payFormBtn').classList.add('opacity-50', 'cursor-not-allowed');
+        
+        const acceptancePaid = currentUserData.acceptanceFeePaid === true;
+        document.getElementById('acceptanceFeeStatus').innerText = acceptancePaid ? 'PAID' : 'UNPAID';
+        document.getElementById('acceptanceFeeStatus').className = acceptancePaid ? 'text-xs text-green-400' : 'text-xs text-red-400';
+        document.getElementById('acceptanceFeeCard').style.borderColor = acceptancePaid ? '#22c55e' : '#334155';
+        document.getElementById('payAcceptanceBtn').disabled = acceptancePaid;
+        if(acceptancePaid) document.getElementById('payAcceptanceBtn').classList.add('opacity-50', 'cursor-not-allowed');
+        
+        const fullPaid = currentUserData.fullPayment === true;
+        if(fullPaid) {
+            document.getElementById('fullPaymentStatus').innerText = 'FULLY PAID';
+            document.getElementById('fullPaymentStatus').className = 'text-xs text-green-400';
+            document.getElementById('fullPaymentCard').style.borderColor = '#22c55e';
+            document.getElementById('payFullBtn').disabled = true;
+            document.getElementById('payFullBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('payTuitionBtn').disabled = true;
+            document.getElementById('payTuitionBtn').classList.add('opacity-50', 'cursor-not-allowed');
         }
         
-        if(daysOverdue >= 5 && !currentUserData.suspended) {
-            await db.collection('users').doc(auth.currentUser.uid).update({ suspended: true });
-            currentUserData.suspended = true;
-            alert("Your account has been suspended due to unpaid tuition fees. Contact admin.");
+        await updateTuitionStatus();
+    }
+
+    async function updateTuitionStatus() {
+        if(!currentUserData) return;
+        
+        const fullPaid = currentUserData.fullPayment === true;
+        const accountCreatedAt = currentUserData.createdAt?.toDate() || new Date();
+        const lastTuitionPaid = currentUserData.lastTuitionPaidDate?.toDate() || null;
+        const tuitionPaidUntil = currentUserData.tuitionPaidUntil?.toDate() || null;
+        const now = new Date();
+        
+        let isTuitionDue = false;
+        let daysOverdue = 0;
+        let nextDueDate = null;
+        
+        if(!fullPaid) {
+            if(!lastTuitionPaid) {
+                const daysSinceCreation = Math.floor((now - accountCreatedAt) / (1000 * 60 * 60 * 24));
+                if(daysSinceCreation >= 30) {
+                    isTuitionDue = true;
+                    daysOverdue = daysSinceCreation - 30;
+                    nextDueDate = new Date(accountCreatedAt);
+                    nextDueDate.setDate(accountCreatedAt.getDate() + 30);
+                } else {
+                    nextDueDate = new Date(accountCreatedAt);
+                    nextDueDate.setDate(accountCreatedAt.getDate() + 30);
+                }
+            } else {
+                if(tuitionPaidUntil && tuitionPaidUntil < now) {
+                    isTuitionDue = true;
+                    daysOverdue = Math.floor((now - tuitionPaidUntil) / (1000 * 60 * 60 * 24));
+                    nextDueDate = new Date(tuitionPaidUntil);
+                } else if(tuitionPaidUntil) {
+                    nextDueDate = new Date(tuitionPaidUntil);
+                } else {
+                    nextDueDate = new Date(lastTuitionPaid);
+                    nextDueDate.setDate(lastTuitionPaid.getDate() + 30);
+                    if(nextDueDate < now) isTuitionDue = true;
+                }
+            }
         }
-    } else {
-        tuitionStatusSpan.innerText = 'ACTIVE';
-        tuitionStatusSpan.className = 'text-xs text-green-400';
-        tuitionCard.style.borderColor = '#22c55e';
-        if(nextDueDate) {
-            const daysLeft = Math.ceil((nextDueDate - now) / (1000 * 60 * 60 * 24));
-            tuitionDueSpan.innerHTML = `Next due: ${nextDueDate.toLocaleDateString()} (${daysLeft} days left)`;
+        
+        const tuitionCard = document.getElementById('tuitionFeeCard');
+        const tuitionStatusSpan = document.getElementById('tuitionFeeStatus');
+        const tuitionDueSpan = document.getElementById('tuitionDueDate');
+        const tuitionRecurringInfo = document.getElementById('tuitionRecurringInfo');
+        
+        if(fullPaid) {
+            tuitionStatusSpan.innerText = 'COVERED';
+            tuitionStatusSpan.className = 'text-xs text-green-400';
+            tuitionCard.style.borderColor = '#22c55e';
+            tuitionDueSpan.classList.add('hidden');
+            tuitionRecurringInfo.classList.add('hidden');
+        } else if(isTuitionDue) {
+            tuitionStatusSpan.innerText = `DUE (${daysOverdue} days overdue)`;
+            tuitionStatusSpan.className = 'text-xs text-red-400 font-bold';
+            tuitionCard.style.borderColor = '#ef4444';
+            tuitionDueSpan.innerHTML = `<span class="text-red-400">⚠️ Payment required now!</span>`;
             tuitionDueSpan.classList.remove('hidden');
-        }
-        tuitionRecurringInfo.classList.remove('hidden');
-        tuitionRecurringInfo.innerHTML = `Tuition fee recurs every 30 days. Next payment due on ${nextDueDate?.toLocaleDateString() || 'N/A'}`;
-    }
-    
-    const payTuitionBtn = document.getElementById('payTuitionBtn');
-    if(fullPaid) {
-        payTuitionBtn.disabled = true;
-        payTuitionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    } else {
-        payTuitionBtn.disabled = false;
-        payTuitionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        if(isTuitionDue) {
-            payTuitionBtn.classList.add('bg-red-600', 'animate-pulse');
+            tuitionRecurringInfo.classList.remove('hidden');
+            tuitionRecurringInfo.innerHTML = `<span class="text-red-400">⚠️ Tuition fee of N1,000 is due! Please pay within 5 days to avoid suspension.</span>`;
+            
+            if(daysOverdue === 1 || daysOverdue === 3 || daysOverdue === 5) {
+                await sendTuitionWarningMessage(daysOverdue);
+            }
+            
+            if(daysOverdue >= 5 && !currentUserData.suspended) {
+                await db.collection('users').doc(auth.currentUser.uid).update({ suspended: true });
+                currentUserData.suspended = true;
+                alert("Your account has been suspended due to unpaid tuition fees. Contact admin.");
+            }
         } else {
-            payTuitionBtn.classList.remove('bg-red-600', 'animate-pulse');
+            tuitionStatusSpan.innerText = 'ACTIVE';
+            tuitionStatusSpan.className = 'text-xs text-green-400';
+            tuitionCard.style.borderColor = '#22c55e';
+            if(nextDueDate) {
+                const daysLeft = Math.ceil((nextDueDate - now) / (1000 * 60 * 60 * 24));
+                tuitionDueSpan.innerHTML = `Next due: ${nextDueDate.toLocaleDateString()} (${daysLeft} days left)`;
+                tuitionDueSpan.classList.remove('hidden');
+            }
+            tuitionRecurringInfo.classList.remove('hidden');
+            tuitionRecurringInfo.innerHTML = `Tuition fee recurs every 30 days. Next payment due on ${nextDueDate?.toLocaleDateString() || 'N/A'}`;
+        }
+        
+        const payTuitionBtn = document.getElementById('payTuitionBtn');
+        if(fullPaid) {
+            payTuitionBtn.disabled = true;
+            payTuitionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            payTuitionBtn.disabled = false;
+            payTuitionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            if(isTuitionDue) {
+                payTuitionBtn.classList.add('bg-red-600', 'animate-pulse');
+            } else {
+                payTuitionBtn.classList.remove('bg-red-600', 'animate-pulse');
+            }
         }
     }
-}
 
-async function sendTuitionWarningMessage(daysOverdue) {
-    if(!currentUserData) return;
-    const warningText = `TUITION REMINDER: Your tuition fee of N1,000 is ${daysOverdue} days overdue. Pay within ${5-daysOverdue} days to avoid account suspension.`;
-    const userRef = db.collection('users').doc(auth.currentUser.uid);
-    const existingDMs = currentUserData.directMessages || [];
-    existingDMs.push({ text: warningText, timestamp: new Date(), fromAdmin: true });
-    await userRef.update({ directMessages: existingDMs });
-    await loadUserData();
-    refreshNotificationBadge();
-}
+    async function sendTuitionWarningMessage(daysOverdue) {
+        if(!currentUserData) return;
+        const warningText = `TUITION REMINDER: Your tuition fee of N1,000 is ${daysOverdue} days overdue. Pay within ${5-daysOverdue} days to avoid account suspension.`;
+        const userRef = db.collection('users').doc(auth.currentUser.uid);
+        const existingDMs = currentUserData.directMessages || [];
+        existingDMs.push({ text: warningText, timestamp: new Date(), fromAdmin: true });
+        await userRef.update({ directMessages: existingDMs });
+        await loadUserData();
+        refreshNotificationBadge();
+    }
+
     async function doLogin() {
         const codValue = document.getElementById('loginCod').value.trim().toUpperCase();
         const surnameValue = document.getElementById('loginSurname').value.trim().toUpperCase();
@@ -1144,27 +1136,32 @@ async function sendTuitionWarningMessage(daysOverdue) {
     }
 
     async function loadUserData() {
-    if (!auth.currentUser) return;
-    const doc = await db.collection('users').doc(auth.currentUser.uid).get();
-    if (doc.exists) {
-        currentUserData = doc.data();
-        if (currentUserData.suspended) {
-            alert('Account suspended. Contact admin.');
-            logout();
-            return;
+        if (!auth.currentUser) return;
+        const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+        if (doc.exists) {
+            currentUserData = doc.data();
+            if (currentUserData.suspended) {
+                alert('Account suspended. Contact admin.');
+                logout();
+                return;
+            }
+            if (!currentUserData.directMessages) {
+                await db.collection('users').doc(auth.currentUser.uid).update({ directMessages: [] });
+                currentUserData.directMessages = [];
+            }
+            const assignments = currentUserData.assignments || [];
+            const currentComputedProgress = computeOverallProgress(assignments, currentUserData.stage || 1);
+            if (Math.abs((currentUserData.progress || 0) - currentComputedProgress) > 0.01) {
+                await db.collection('users').doc(auth.currentUser.uid).update({ progress: currentComputedProgress });
+                currentUserData.progress = currentComputedProgress;
+            }
+            updateUI();
+            await updateFeeUI();
+            updateDeadlineAndCountdown();
+            await sendAutoWarningMessage();
+            await refreshNotificationBadge();
         }
-        const assignments = currentUserData.assignments || [];
-        const currentComputedProgress = computeOverallProgress(assignments, currentUserData.stage || 1);
-        if (Math.abs((currentUserData.progress || 0) - currentComputedProgress) > 0.01) {
-            await db.collection('users').doc(auth.currentUser.uid).update({ progress: currentComputedProgress });
-            currentUserData.progress = currentComputedProgress;
-        }
-        updateUI();
-        await updateFeeUI();
-        updateDeadlineAndCountdown();
-        await sendAutoWarningMessage();
     }
-}
 
     function applyFrameToProfile() {
         const frameCode = currentUserData?.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
@@ -1185,31 +1182,6 @@ async function sendTuitionWarningMessage(daysOverdue) {
                 img.style.objectFit = 'cover';
                 img.style.borderRadius = '50%';
             }
-        }
-    }
-
-    async function checkForUnreadNotifications() {
-        if (!auth.currentUser) return;
-        const lastViewedBroadcast = localStorage.getItem('lastViewedBroadcast') || '0';
-        const lastViewedMessages = localStorage.getItem('lastViewedMessages') || '0';
-        let hasNew = false;
-        const broadcastSnapshot = await db.collection('broadcastMessages').get();
-        broadcastSnapshot.forEach(doc => {
-            const msg = doc.data();
-            const msgTime = msg.timestamp?.toDate ? msg.timestamp.toDate().getTime() : 0;
-            if (msgTime > parseInt(lastViewedBroadcast)) hasNew = true;
-        });
-        const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
-        const userData = userDoc.data();
-        const directMessages = userData.directMessages || [];
-        directMessages.forEach(msg => {
-            const msgTime = msg.timestamp?.toDate ? msg.timestamp.toDate().getTime() : 0;
-            if (msgTime > parseInt(lastViewedMessages)) hasNew = true;
-        });
-        const notificationDot = document.getElementById('notificationDot');
-        if (notificationDot) {
-            if (hasNew) notificationDot.classList.remove('hidden');
-            else notificationDot.classList.add('hidden');
         }
     }
 
@@ -1234,14 +1206,6 @@ async function sendTuitionWarningMessage(daysOverdue) {
         
         const baseUrl = window.location.origin + window.location.pathname;
         const referralLink = `${baseUrl}?ref=${currentUserData.referralCode}`;
-window.openNotificationDrawer = openNotificationDrawer;
-window.closeNotificationDrawer = closeNotificationDrawer;
-window.recordPartialPayment = recordPartialPayment;
-window.recordFullPayment = recordFullPayment;
-window.payFormFee = payFormFee;
-window.payAcceptanceFee = payAcceptanceFee;
-window.payTuitionFee = payTuitionFee;
-window.payFullPayment = payFullPayment;
         document.getElementById('referralLinkInput').value = referralLink;
         document.getElementById('refLinkDisplayField').value = referralLink;
         document.getElementById('referralCountDisplay').innerText = currentUserData.referralsCount || 0;
@@ -1261,8 +1225,9 @@ window.payFullPayment = payFullPayment;
         updateStageIndicators(currentUserData.stage || 1);
         loadGrades();
         loadBroadcastMessages();
+        loadDirectMessages();
+        loadCoursesFromFirebase();
         loadMarketProducts();
-        checkForUnreadNotifications();
     }
 
     function updateStageIndicators(currentActiveStage) {
@@ -1279,100 +1244,86 @@ window.payFullPayment = payFullPayment;
     }
 
     async function showUserDetails(userId) {
-    const doc = await db.collection('users').doc(userId).get();
-    if (!doc.exists) return;
-    const data = doc.data();
-    
-    let userFrame = '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
-    if (data.frameCode) {
-        userFrame = data.frameCode.replace(/{{photo}}/g, data.photoUrl || 'https://via.placeholder.com/100');
-    } else {
-        userFrame = `<div class="thick-frame"><img src="${data.photoUrl || 'https://via.placeholder.com/100'}" class="w-full h-full rounded-full object-cover"></div>`;
-    }
-    
-    // Calculate average score from assignments
-    const assignments = data.assignments || [];
-    let totalScore = 0;
-    assignments.forEach(a => totalScore += a.score);
-    const avgScore = assignments.length > 0 ? Math.round(totalScore / assignments.length) : 0;
-    
-    // Format join date
-    const joinDate = data.createdAt?.toDate ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Recently';
-    
-    // Determine rank badge
-    let rankBadge = '';
-    const allUsers = await db.collection('users').orderBy('progress', 'desc').get();
-    let rank = 1;
-    for (const userDoc of allUsers.docs) {
-        if (userDoc.id === userId) break;
-        rank++;
-    }
-    
-    if (rank === 1) rankBadge = '<span class="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-bold ml-2">#1</span>';
-    else if (rank === 2) rankBadge = '<span class="bg-gray-400 text-black px-2 py-1 rounded-full text-xs font-bold ml-2">#2</span>';
-    else if (rank === 3) rankBadge = '<span class="bg-orange-600 px-2 py-1 rounded-full text-xs font-bold ml-2">#3</span>';
-    else if (rank <= 10) rankBadge = `<span class="bg-purple-600 px-2 py-1 rounded-full text-xs font-bold ml-2">Top ${rank}</span>`;
-    
-    const modalHtml = `
-        <div id="userDetailModal" class="modal">
-            <div class="bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-purple-500" style="max-height: 90vh; overflow-y: auto;">
-                <div class="text-center">
-                    <div class="w-28 h-28 mx-auto mb-3">${userFrame}</div>
-                    <h3 class="text-2xl font-bold text-white mb-1">${data.firstName || ''} ${data.surname || ''}</h3>
-                    <div class="flex items-center justify-center mt-1">
-                        ${rankBadge}
+        const doc = await db.collection('users').doc(userId).get();
+        if (!doc.exists) return;
+        const data = doc.data();
+        
+        let userFrame = '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
+        if (data.frameCode) {
+            userFrame = data.frameCode.replace(/{{photo}}/g, data.photoUrl || 'https://via.placeholder.com/100');
+        } else {
+            userFrame = `<div class="thick-frame"><img src="${data.photoUrl || 'https://via.placeholder.com/100'}" class="w-full h-full rounded-full object-cover"></div>`;
+        }
+        
+        const assignments = data.assignments || [];
+        let totalScore = 0;
+        assignments.forEach(a => totalScore += a.score);
+        const avgScore = assignments.length > 0 ? Math.round(totalScore / assignments.length) : 0;
+        const joinDate = data.createdAt?.toDate ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Recently';
+        
+        let rankBadge = '';
+        const allUsers = await db.collection('users').orderBy('progress', 'desc').get();
+        let rank = 1;
+        for (const userDoc of allUsers.docs) {
+            if (userDoc.id === userId) break;
+            rank++;
+        }
+        
+        if (rank === 1) rankBadge = '<span class="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-bold ml-2">#1</span>';
+        else if (rank === 2) rankBadge = '<span class="bg-gray-400 text-black px-2 py-1 rounded-full text-xs font-bold ml-2">#2</span>';
+        else if (rank === 3) rankBadge = '<span class="bg-orange-600 px-2 py-1 rounded-full text-xs font-bold ml-2">#3</span>';
+        else if (rank <= 10) rankBadge = `<span class="bg-purple-600 px-2 py-1 rounded-full text-xs font-bold ml-2">Top ${rank}</span>`;
+        
+        const modalHtml = `
+            <div id="userDetailModal" class="modal">
+                <div class="bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-purple-500" style="max-height: 90vh; overflow-y: auto;">
+                    <div class="text-center">
+                        <div class="w-28 h-28 mx-auto mb-3">${userFrame}</div>
+                        <h3 class="text-2xl font-bold text-white mb-1">${data.firstName || ''} ${data.surname || ''}</h3>
+                        <div class="flex items-center justify-center mt-1">${rankBadge}</div>
                     </div>
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <div class="bg-slate-800 rounded-xl p-3 text-center">
+                            <span class="material-icons text-purple-400 text-2xl">trending_up</span>
+                            <p class="text-2xl font-bold text-white">${Math.round(data.progress || 0)}%</p>
+                            <p class="text-xs text-slate-400">Progress</p>
+                        </div>
+                        <div class="bg-slate-800 rounded-xl p-3 text-center">
+                            <span class="material-icons text-yellow-400 text-2xl">paid</span>
+                            <p class="text-2xl font-bold text-white">${data.coins || 0}</p>
+                            <p class="text-xs text-slate-400">Coins</p>
+                        </div>
+                        <div class="bg-slate-800 rounded-xl p-3 text-center">
+                            <span class="material-icons text-blue-400 text-2xl">stages</span>
+                            <p class="text-2xl font-bold text-white">${data.stage || 1}</p>
+                            <p class="text-xs text-slate-400">Stage</p>
+                        </div>
+                        <div class="bg-slate-800 rounded-xl p-3 text-center">
+                            <span class="material-icons text-green-400 text-2xl">assignment</span>
+                            <p class="text-2xl font-bold text-white">${assignments.length}</p>
+                            <p class="text-xs text-slate-400">Tasks Done</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-800 rounded-xl p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-slate-400 text-sm">Average Score</span>
+                            <span class="text-white font-bold">${avgScore}%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2">
+                            <div class="bg-purple-500 rounded-full h-2" style="width: ${avgScore}%"></div>
+                        </div>
+                    </div>
+                    <button onclick="closeUserDetailModal()" class="w-full mt-5 bg-gradient-to-r from-blue-600 to-purple-600 py-3 rounded-2xl font-bold">Close</button>
                 </div>
-                
-                <div class="grid grid-cols-2 gap-3 mt-6">
-                    <div class="bg-slate-800 rounded-xl p-3 text-center">
-                        <span class="material-icons text-purple-400 text-2xl">trending_up</span>
-                        <p class="text-2xl font-bold text-white">${Math.round(data.progress || 0)}%</p>
-                        <p class="text-xs text-slate-400">Progress</p>
-                    </div>
-                    <div class="bg-slate-800 rounded-xl p-3 text-center">
-                        <span class="material-icons text-yellow-400 text-2xl">paid</span>
-                        <p class="text-2xl font-bold text-white">${data.coins || 0}</p>
-                        <p class="text-xs text-slate-400">Coins</p>
-                    </div>
-                    <div class="bg-slate-800 rounded-xl p-3 text-center">
-                        <span class="material-icons text-blue-400 text-2xl">stages</span>
-                        <p class="text-2xl font-bold text-white">${data.stage || 1}</p>
-                        <p class="text-xs text-slate-400">Stage</p>
-                    </div>
-                    <div class="bg-slate-800 rounded-xl p-3 text-center">
-                        <span class="material-icons text-green-400 text-2xl">assignment</span>
-                        <p class="text-2xl font-bold text-white">${assignments.length}</p>
-                        <p class="text-xs text-slate-400">Tasks Done</p>
-                    </div>
-                </div>
-                
-                <div class="mt-4 bg-slate-800 rounded-xl p-3">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-slate-400 text-sm">Average Score</span>
-                        <span class="text-white font-bold">${avgScore}%</span>
-                    </div>
-                    <div class="w-full bg-slate-700 rounded-full h-2">
-                        <div class="bg-purple-500 rounded-full h-2" style="width: ${avgScore}%"></div>
-                    </div>
-                </div>
-                
-                <div class="mt-4 flex justify-between items-center text-xs text-slate-400">
-                    <div class="flex items-center gap-1"><span class="material-icons text-slate-500 text-sm">calendar_today</span> Joined: ${joinDate}</div>
-                    <div class="flex items-center gap-1"><span class="material-icons text-slate-500 text-sm">school</span> ${assignments.length} Tasks</div>
-                </div>
-                
-                <button onclick="closeUserDetailModal()" class="w-full mt-5 bg-gradient-to-r from-blue-600 to-purple-600 py-3 rounded-2xl font-bold">Close</button>
             </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
 
-function closeUserDetailModal() {
-    const modal = document.getElementById('userDetailModal');
-    if (modal) modal.remove();
-}
+    function closeUserDetailModal() {
+        const modal = document.getElementById('userDetailModal');
+        if (modal) modal.remove();
+    }
 
     async function loadGrades() {
         const assignments = currentUserData?.assignments || [];
@@ -1493,9 +1444,72 @@ function closeUserDetailModal() {
                     </div>`;
         });
         document.getElementById('broadcastMessagesContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No announcements yet</p>';
-        document.getElementById('directMessagesContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No messages yet</p>';
-        
-        localStorage.setItem('lastChatView', Date.now().toString());
+    }
+
+    async function loadDirectMessages() {
+        const directMessages = currentUserData?.directMessages || [];
+        let html = '';
+        directMessages.slice().reverse().forEach(msg => {
+            const time = msg.timestamp?.toDate ? new Date(msg.timestamp.toDate()).toLocaleString() : '';
+            html += `<div class="bg-slate-800 rounded-xl p-3 border-l-4 border-purple-500">
+                        <small class="text-slate-400 text-xs">${time}</small>
+                        <p class="text-white text-sm mt-1">${msg.text}</p>
+                        ${msg.fromAdmin ? '<span class="text-xs text-purple-400 mt-1 inline-block">From Admin</span>' : ''}
+                    </div>`;
+        });
+        document.getElementById('directMessagesContainer').innerHTML = html || '<p class="text-slate-400 text-center py-4">No direct messages yet</p>';
+    }
+
+    async function loadCoursesFromFirebase() {
+        try {
+            const snapshot = await db.collection('courses').orderBy('stage', 'asc').get();
+            let html = '';
+            const currentStage = currentUserData?.stage || 1;
+            
+            if (snapshot.empty) {
+                html = '<p class="text-slate-400 text-center py-4">No courses available. Please contact admin.</p>';
+            } else {
+                snapshot.forEach(doc => {
+                    const course = doc.data();
+                    const isLocked = course.stage > currentStage;
+                    const isAvailable = course.stage <= currentStage;
+                    html += `<div class="bg-slate-800 rounded-xl p-3 flex justify-between items-center ${isLocked ? 'opacity-60' : ''}">
+                                <div>
+                                    <span class="font-bold text-white">Stage ${course.stage}: ${course.title}</span>
+                                    <p class="text-slate-400 text-xs">${course.description || 'Course description'}</p>
+                                </div>
+                                ${isLocked ? '<span class="material-icons text-slate-500">lock</span>' : (isAvailable ? '<span class="material-icons text-green-400">check_circle</span>' : '')}
+                            </div>`;
+                });
+            }
+            
+            document.getElementById('coursesList').innerHTML = html;
+            
+            const registerBtn = document.getElementById('registerStageBtn');
+            if (registerBtn) {
+                const canRegister = currentUserData?.formFeePaid && currentUserData?.acceptanceFeePaid;
+                if (!canRegister) {
+                    registerBtn.disabled = true;
+                    registerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    registerBtn.title = "Pay Form and Acceptance fees first";
+                } else {
+                    registerBtn.disabled = false;
+                    registerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        } catch(error) {
+            console.error("Error loading courses:", error);
+            document.getElementById('coursesList').innerHTML = '<p class="text-red-400 text-center py-4">Error loading courses. Please refresh.</p>';
+        }
+    }
+
+    function registerForCurrentStage() {
+        if (!currentUserData) return;
+        if (!currentUserData.formFeePaid || !currentUserData.acceptanceFeePaid) {
+            alert("Please pay Form Fee and Acceptance Fee first before registering for courses.");
+            return;
+        }
+        alert('Registered for Stage ' + (currentUserData?.stage || 1));
     }
 
     async function loadMarketProducts() {
@@ -1514,146 +1528,242 @@ function closeUserDetailModal() {
         document.getElementById('marketGridContainer').innerHTML = html || '<p class="text-slate-400 text-center py-8 col-span-3">No products yet</p>';
     }
 
-
-// ========== NOTIFICATION DRAWER FUNCTIONS ==========
-function openNotificationDrawer() { 
-    document.getElementById('notificationDrawer').classList.add('open'); 
-    markAllNotificationsAsRead(); 
-    loadDrawerNotifications(); 
-}
-function closeNotificationDrawer() { document.getElementById('notificationDrawer').classList.remove('open'); }
-
-async function loadDrawerNotifications() {
-    if(!currentUserData) return;
-    let html = '';
-    const broadcastSnap = await db.collection('broadcastMessages').orderBy('timestamp', 'desc').limit(10).get();
-    broadcastSnap.forEach(doc => { 
-        let msg = doc.data(); 
-        html += `<div class="notification-item"><div class="flex justify-between"><span class="font-bold text-purple-300">Announcement</span><span class="red-badge-bullet">NEW</span></div><p class="text-white text-sm">${msg.text}</p><small class="text-slate-400">${new Date(msg.timestamp?.toDate()).toLocaleString()}</small></div>`; 
-    });
-    const dms = currentUserData.directMessages || [];
-    dms.slice().reverse().forEach(msg => { 
-        html += `<div class="notification-item"><div class="flex justify-between"><span class="font-bold text-blue-300">Direct Message</span><span class="red-badge-bullet">NEW</span></div><p class="text-white text-sm">${msg.text}</p><small>${new Date(msg.timestamp?.toDate()).toLocaleString()}</small></div>`; 
-    });
-    const assignments = currentUserData.assignments || [];
-    assignments.forEach(ass => { 
-        html += `<div class="notification-item"><div class="font-bold text-green-300">Assignment Score</div><p class="text-white text-sm">${ass.title}: ${ass.score}% (+${ass.coinsEarned || 0} coins)</p></div>`; 
-    });
-    html += `<div class="notification-item bg-slate-800"><div class="font-bold text-yellow-300">Chat Activity</div><p class="text-white text-sm">People actively chatting in Global Chat</p><button onclick="showSection('chat'); closeNotificationDrawer();" class="text-purple-400 text-xs mt-1">Go to Chat</button></div>`;
-    document.getElementById('drawerNotificationsList').innerHTML = html || '<div class="text-center text-slate-400 p-6">No new updates</div>';
-}
-
-async function refreshNotificationBadge() {
-    if(!currentUserData) return;
-    let count = 0;
-    const lastBroad = localStorage.getItem('lastBroadcastView') || '0';
-    const broadSnap = await db.collection('broadcastMessages').get();
-    broadSnap.forEach(doc => { let ts = doc.data().timestamp?.toDate?.()?.getTime() || 0; if(ts > parseInt(lastBroad)) count++; });
-    const lastDM = localStorage.getItem('lastDMView') || '0';
-    (currentUserData.directMessages || []).forEach(msg => { let ts = msg.timestamp?.toDate?.()?.getTime() || 0; if(ts > parseInt(lastDM)) count++; });
-    const lastAssign = localStorage.getItem('lastAssignmentView') || '0';
-    (currentUserData.assignments || []).forEach(a => { let t = a.timestamp?.toDate?.()?.getTime() || a.addedAt || 0; if(t > parseInt(lastAssign)) count++; });
-    const lastChat = localStorage.getItem('lastChatView') || '0';
-    const chatSnap = await db.collection('chatMessages').orderBy('timestamp', 'desc').limit(1).get();
-    chatSnap.forEach(doc => { let ts = doc.data().timestamp?.toDate?.()?.getTime() || 0; if(ts > parseInt(lastChat)) count++; });
-    const badge = document.getElementById('globalBellBadge');
-    if(count > 0) { badge.innerText = count > 9 ? '9+' : count; badge.classList.remove('hidden'); } 
-    else { badge.classList.add('hidden'); }
-}
-
-function markAllNotificationsAsRead() {
-    localStorage.setItem('lastBroadcastView', Date.now().toString());
-    localStorage.setItem('lastDMView', Date.now().toString());
-    localStorage.setItem('lastAssignmentView', Date.now().toString());
-    localStorage.setItem('lastChatView', Date.now().toString());
-    refreshNotificationBadge();
-}
-
-// ========== PAYMENT DEADLINE FUNCTIONS ==========
-let deadlineInterval = null;
-
-async function updateDeadlineAndCountdown() {
-    if(!currentUserData) return;
-    const userRef = db.collection('users').doc(auth.currentUser.uid);
-    let deadline = currentUserData.paymentDeadline ? currentUserData.paymentDeadline.toDate() : null;
-    const fullyPaid = currentUserData.fullPayment === true;
-    const countdownDiv = document.getElementById('countdownDisplay');
-    const statusMsg = document.getElementById('paymentStatusMsg');
-    const warningDiv = document.getElementById('suspensionWarningMsg');
-    
-    if(fullyPaid) {
-        if(countdownDiv) countdownDiv.innerText = 'FULLY PAID - No Deadline';
-        if(statusMsg) statusMsg.innerText = 'Full payment completed. Account active.';
-        if(warningDiv) warningDiv.classList.add('hidden');
-        if(deadlineInterval) clearInterval(deadlineInterval);
-        return;
+    function openNotificationDrawer() { 
+        document.getElementById('notificationDrawer').classList.add('open'); 
+        markAllNotificationsAsRead(); 
+        loadDrawerNotifications(); 
     }
-    if(!deadline && currentUserData.createdAt) {
-        let startDate = currentUserData.createdAt?.toDate() || new Date();
-        deadline = new Date(startDate.getTime() + 20 * 24 * 60 * 60 * 1000);
-        await userRef.update({ paymentDeadline: deadline });
-        currentUserData.paymentDeadline = deadline;
+
+    function closeNotificationDrawer() { 
+        document.getElementById('notificationDrawer').classList.remove('open'); 
     }
-    function tick() {
-        if(fullyPaid) return;
-        const now = new Date();
-        const diff = deadline.getTime() - now.getTime();
-        if(diff <= 0) {
-            if(countdownDiv) countdownDiv.innerText = 'ACCOUNT SUSPENDED';
-            if(statusMsg) statusMsg.innerText = 'Deadline passed. Contact admin to restore.';
-            if(warningDiv) warningDiv.classList.remove('hidden');
-            if(!currentUserData.suspended) userRef.update({ suspended: true });
+
+    async function loadDrawerNotifications() {
+        if(!currentUserData) return;
+        let html = '';
+        
+        const broadcastSnap = await db.collection('broadcastMessages').orderBy('timestamp', 'desc').limit(10).get();
+        const lastBroadcastView = parseInt(localStorage.getItem('lastBroadcastView') || '0');
+        
+        broadcastSnap.forEach(doc => { 
+            let msg = doc.data(); 
+            let msgTime = msg.timestamp?.toDate ? msg.timestamp.toDate().getTime() : 0;
+            let isNew = msgTime > lastBroadcastView;
+            let previewText = msg.text.length > 80 ? msg.text.substring(0, 80) + '...' : msg.text;
+            
+            html += `<div class="notification-item border-l-4 border-purple-500" onclick="showSection('update'); closeNotificationDrawer();">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-purple-300">Announcement</span>
+                            ${isNew ? '<span class="red-badge-bullet">NEW</span>' : ''}
+                        </div>
+                        <p class="text-white text-sm mt-1">${previewText}</p>
+                        <small class="text-slate-400">${new Date(msg.timestamp?.toDate()).toLocaleString()}</small>
+                        <div class="text-purple-400 text-xs mt-2">Tap to view all announcements →</div>
+                    </div>`; 
+        });
+        
+        const dms = currentUserData.directMessages || [];
+        const lastDMView = parseInt(localStorage.getItem('lastDMView') || '0');
+        
+        dms.slice().reverse().slice(0, 10).forEach(msg => { 
+            let msgTime = msg.timestamp?.toDate ? msg.timestamp.toDate().getTime() : 0;
+            let isNew = msgTime > lastDMView;
+            let previewText = msg.text.length > 80 ? msg.text.substring(0, 80) + '...' : msg.text;
+            
+            html += `<div class="notification-item border-l-4 border-blue-500" onclick="showSection('messages'); closeNotificationDrawer();">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-blue-300">Direct Message</span>
+                            ${isNew ? '<span class="red-badge-bullet">NEW</span>' : ''}
+                        </div>
+                        <p class="text-white text-sm mt-1">${previewText}</p>
+                        <small class="text-slate-400">${msg.timestamp?.toDate ? new Date(msg.timestamp.toDate()).toLocaleString() : 'Just now'}</small>
+                        <div class="text-blue-400 text-xs mt-2">Tap to view your messages →</div>
+                    </div>`; 
+        });
+        
+        const assignments = currentUserData.assignments || [];
+        const lastAssignmentView = parseInt(localStorage.getItem('lastAssignmentView') || '0');
+        const recentAssignments = assignments.filter(a => {
+            let assTime = a.timestamp?.toDate?.()?.getTime() || a.addedAt || 0;
+            return assTime > lastAssignmentView;
+        }).slice(0, 5);
+        
+        recentAssignments.forEach(ass => { 
+            html += `<div class="notification-item border-l-4 border-green-500" onclick="showSection('grades'); closeNotificationDrawer();">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-green-300">New Grade Posted</span>
+                            <span class="red-badge-bullet">NEW</span>
+                        </div>
+                        <p class="text-white text-sm mt-1">${ass.title}: ${ass.score}% (+${ass.coinsEarned || 0} coins)</p>
+                        <div class="text-green-400 text-xs mt-2">Tap to view your grades →</div>
+                    </div>`; 
+        });
+        
+        if (html === '') {
+            html = '<div class="text-center text-slate-400 p-6">No new notifications</div>';
+        }
+        
+        document.getElementById('drawerNotificationsList').innerHTML = html;
+    }
+
+    async function refreshNotificationBadge() {
+        if(!currentUserData || !auth.currentUser) return;
+        
+        let totalUnread = 0;
+        const now = Date.now();
+        
+        const lastBroadcastView = parseInt(localStorage.getItem('lastBroadcastView') || '0');
+        const broadcastSnap = await db.collection('broadcastMessages').get();
+        broadcastSnap.forEach(doc => { 
+            let msgTime = doc.data().timestamp?.toDate?.()?.getTime() || 0; 
+            if(msgTime > lastBroadcastView) totalUnread++;
+        });
+        
+        const lastDMView = parseInt(localStorage.getItem('lastDMView') || '0');
+        const directMessages = currentUserData.directMessages || [];
+        directMessages.forEach(msg => { 
+            let msgTime = msg.timestamp?.toDate?.()?.getTime() || 0; 
+            if(msgTime > lastDMView) totalUnread++;
+        });
+        
+        const lastAssignmentView = parseInt(localStorage.getItem('lastAssignmentView') || '0');
+        const assignments = currentUserData.assignments || [];
+        assignments.forEach(ass => { 
+            let assTime = ass.timestamp?.toDate?.()?.getTime() || ass.addedAt || 0; 
+            if(assTime > lastAssignmentView && (now - assTime) < 7 * 24 * 60 * 60 * 1000) totalUnread++;
+        });
+        
+        const badge = document.getElementById('globalBellBadge');
+        if(badge) {
+            if(totalUnread > 0) {
+                badge.innerText = totalUnread > 9 ? '9+' : totalUnread;
+                badge.classList.remove('hidden');
+                badge.style.animation = 'pulse 1.2s infinite';
+            } else {
+                badge.classList.add('hidden');
+                badge.style.animation = 'none';
+            }
+        }
+        
+        if(totalUnread > 0) {
+            document.title = `(${totalUnread}) Coddeey Portal`;
+        } else {
+            document.title = 'Coddeey School Portal';
+        }
+    }
+
+    function markAllNotificationsAsRead() {
+        const now = Date.now().toString();
+        localStorage.setItem('lastBroadcastView', now);
+        localStorage.setItem('lastDMView', now);
+        localStorage.setItem('lastAssignmentView', now);
+        localStorage.setItem('lastChatView', now);
+        refreshNotificationBadge();
+    }
+
+    function startNotificationWatcher() {
+        setInterval(async () => {
+            if(auth.currentUser && currentUserData) {
+                await refreshNotificationBadge();
+            }
+        }, 30000);
+        
+        if(db) {
+            db.collection('broadcastMessages').onSnapshot(() => {
+                if(auth.currentUser && currentUserData) {
+                    refreshNotificationBadge();
+                    if(document.getElementById('notificationDrawer').classList.contains('open')) {
+                        loadDrawerNotifications();
+                    }
+                }
+            });
+        }
+    }
+
+    let deadlineInterval = null;
+
+    async function updateDeadlineAndCountdown() {
+        if(!currentUserData) return;
+        const userRef = db.collection('users').doc(auth.currentUser.uid);
+        let deadline = currentUserData.paymentDeadline ? currentUserData.paymentDeadline.toDate() : null;
+        const fullyPaid = currentUserData.fullPayment === true;
+        const countdownDiv = document.getElementById('countdownDisplay');
+        const statusMsg = document.getElementById('paymentStatusMsg');
+        const warningDiv = document.getElementById('suspensionWarningMsg');
+        
+        if(fullyPaid) {
+            if(countdownDiv) countdownDiv.innerText = 'FULLY PAID - No Deadline';
+            if(statusMsg) statusMsg.innerText = 'Full payment completed. Account active.';
+            if(warningDiv) warningDiv.classList.add('hidden');
             if(deadlineInterval) clearInterval(deadlineInterval);
             return;
         }
-        const days = Math.floor(diff / (86400000));
-        const hours = Math.floor((diff % 86400000)/3600000);
-        const mins = Math.floor((diff % 3600000)/60000);
-        if(countdownDiv) countdownDiv.innerText = `${days}d ${hours}h ${mins}m remaining`;
-        if(statusMsg) statusMsg.innerText = 'Partial payments add +2 days. Warning messages sent every 2 days.';
-        if(days <= 2) warningDiv?.classList.remove('hidden');
-        else warningDiv?.classList.add('hidden');
+        if(!deadline && currentUserData.createdAt) {
+            let startDate = currentUserData.createdAt?.toDate() || new Date();
+            deadline = new Date(startDate.getTime() + 20 * 24 * 60 * 60 * 1000);
+            await userRef.update({ paymentDeadline: deadline });
+            currentUserData.paymentDeadline = deadline;
+        }
+        function tick() {
+            if(fullyPaid) return;
+            const now = new Date();
+            const diff = deadline.getTime() - now.getTime();
+            if(diff <= 0) {
+                if(countdownDiv) countdownDiv.innerText = 'ACCOUNT SUSPENDED';
+                if(statusMsg) statusMsg.innerText = 'Deadline passed. Contact admin to restore.';
+                if(warningDiv) warningDiv.classList.remove('hidden');
+                if(!currentUserData.suspended) userRef.update({ suspended: true });
+                if(deadlineInterval) clearInterval(deadlineInterval);
+                return;
+            }
+            const days = Math.floor(diff / (86400000));
+            const hours = Math.floor((diff % 86400000)/3600000);
+            const mins = Math.floor((diff % 3600000)/60000);
+            if(countdownDiv) countdownDiv.innerText = `${days}d ${hours}h ${mins}m remaining`;
+            if(statusMsg) statusMsg.innerText = 'Partial payments add +2 days. Warning messages sent every 2 days.';
+            if(days <= 2) warningDiv?.classList.remove('hidden');
+            else warningDiv?.classList.add('hidden');
+        }
+        tick();
+        if(deadlineInterval) clearInterval(deadlineInterval);
+        deadlineInterval = setInterval(tick, 60000);
     }
-    tick();
-    if(deadlineInterval) clearInterval(deadlineInterval);
-    deadlineInterval = setInterval(tick, 60000);
-}
 
-async function recordPartialPayment(amount) {
-    if(!currentUserData) return;
-    const userRef = db.collection('users').doc(auth.currentUser.uid);
-    let newDeadline = currentUserData.paymentDeadline?.toDate() || new Date();
-    newDeadline.setDate(newDeadline.getDate() + 2);
-    await userRef.update({ paymentDeadline: newDeadline, lastPartialAmount: amount });
-    alert(`Partial payment of N${amount} recorded! +2 days added to deadline.`);
-    await loadUserData();
-    updateDeadlineAndCountdown();
-    await sendAutoWarningMessage();
-}
-
-async function recordFullPayment() {
-    if(!currentUserData) return;
-    await db.collection('users').doc(auth.currentUser.uid).update({ fullPayment: true, paymentDeadline: null, suspended: false });
-    alert("Full payment recorded! No deadline countdown.");
-    await loadUserData();
-    if(deadlineInterval) clearInterval(deadlineInterval);
-    updateDeadlineAndCountdown();
-}
-
-async function sendAutoWarningMessage() {
-    if(!currentUserData || currentUserData.fullPayment) return;
-    const lastWarn = currentUserData.lastWarningDate?.toDate() || null;
-    const now = new Date();
-    if(!lastWarn || (now.getTime() - lastWarn.getTime()) > 48*3600000) {
-        const warningText = "DEADLINE WARNING: Your payment deadline is approaching. Complete payment within remaining days to avoid account suspension.";
+    async function recordPartialPayment(amount) {
+        if(!currentUserData) return;
         const userRef = db.collection('users').doc(auth.currentUser.uid);
-        const existingDMs = currentUserData.directMessages || [];
-        existingDMs.push({ text: warningText, timestamp: new Date(), fromAdmin: true });
-        await userRef.update({ directMessages: existingDMs, lastWarningDate: new Date() });
+        let newDeadline = currentUserData.paymentDeadline?.toDate() || new Date();
+        newDeadline.setDate(newDeadline.getDate() + 2);
+        await userRef.update({ paymentDeadline: newDeadline, lastPartialAmount: amount });
+        alert(`Partial payment of N${amount} recorded! +2 days added to deadline.`);
         await loadUserData();
-        refreshNotificationBadge();
+        updateDeadlineAndCountdown();
+        await sendAutoWarningMessage();
     }
-}
+
+    async function recordFullPayment() {
+        if(!currentUserData) return;
+        await db.collection('users').doc(auth.currentUser.uid).update({ fullPayment: true, paymentDeadline: null, suspended: false });
+        alert("Full payment recorded! No deadline countdown.");
+        await loadUserData();
+        if(deadlineInterval) clearInterval(deadlineInterval);
+        updateDeadlineAndCountdown();
+    }
+
+    async function sendAutoWarningMessage() {
+        if(!currentUserData || currentUserData.fullPayment) return;
+        const lastWarn = currentUserData.lastWarningDate?.toDate() || null;
+        const now = new Date();
+        if(!lastWarn || (now.getTime() - lastWarn.getTime()) > 48*3600000) {
+            const warningText = "DEADLINE WARNING: Your payment deadline is approaching. Complete payment within remaining days to avoid account suspension.";
+            const userRef = db.collection('users').doc(auth.currentUser.uid);
+            const existingDMs = currentUserData.directMessages || [];
+            existingDMs.push({ text: warningText, timestamp: new Date(), fromAdmin: true });
+            await userRef.update({ directMessages: existingDMs, lastWarningDate: new Date() });
+            await loadUserData();
+            refreshNotificationBadge();
+        }
+    }
 
     function showSection(section) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -1666,13 +1776,21 @@ async function sendAutoWarningMessage() {
         if (section === 'chat') loadChatMessages();
         if (section === 'update') {
             loadBroadcastMessages();
-            localStorage.setItem('lastViewedBroadcast', Date.now().toString());
-            checkForUnreadNotifications();
+            localStorage.setItem('lastBroadcastView', Date.now().toString());
+            refreshNotificationBadge();
         }
         if (section === 'messages') {
-            loadBroadcastMessages();
-            localStorage.setItem('lastViewedMessages', Date.now().toString());
-            checkForUnreadNotifications();
+            loadDirectMessages();
+            localStorage.setItem('lastDMView', Date.now().toString());
+            refreshNotificationBadge();
+        }
+        if (section === 'grades') {
+            loadGrades();
+            localStorage.setItem('lastAssignmentView', Date.now().toString());
+            refreshNotificationBadge();
+        }
+        if (section === 'courseform') {
+            loadCoursesFromFirebase();
         }
         if (section === 'market') loadMarketProducts();
         if (section === 'edit') {
@@ -1687,6 +1805,19 @@ async function sendAutoWarningMessage() {
     function logout() {
         auth.signOut().then(() => { location.reload(); }).catch((error) => { console.error("Logout error:", error); });
     }
+
+    window.openNotificationDrawer = openNotificationDrawer;
+    window.closeNotificationDrawer = closeNotificationDrawer;
+    window.recordPartialPayment = recordPartialPayment;
+    window.recordFullPayment = recordFullPayment;
+    window.payFormFee = payFormFee;
+    window.payAcceptanceFee = payAcceptanceFee;
+    window.payTuitionFee = payTuitionFee;
+    window.payFullPayment = payFullPayment;
+    window.showSection = showSection;
+    window.showUserDetails = showUserDetails;
+    window.closeUserDetailModal = closeUserDetailModal;
+    window.registerForCurrentStage = registerForCurrentStage;
 
     document.addEventListener('DOMContentLoaded', () => {
         const frameEditor = document.getElementById('frameEditorTextarea');
@@ -1713,6 +1844,7 @@ async function sendAutoWarningMessage() {
                 document.getElementById('mainApp').classList.remove('hidden');
                 await loadUserData();
                 await loadMiniLeaderboard();
+                startNotificationWatcher();
                 showSection('dashboard');
             } else {
                 await auth.signOut();
