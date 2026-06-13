@@ -245,7 +245,7 @@
             </div>
 
             <button type="submit" id="registerSubmitBtn" class="w-full py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl hover:brightness-110 transition text-white">
-                Submit Registration & Generate COD Number
+                Submit Registration & Generate COD
             </button>
         </form>
     </div>
@@ -916,132 +916,148 @@
     }
 
     async function updateFeeUI() {
-        if(!currentUserData) return;
-        
-        const formPaid = currentUserData.formFeePaid === true;
-        document.getElementById('formFeeStatus').innerText = formPaid ? 'PAID' : 'UNPAID';
-        document.getElementById('formFeeStatus').className = formPaid ? 'text-xs text-green-400' : 'text-xs text-red-400';
-        document.getElementById('formFeeCard').style.borderColor = formPaid ? '#22c55e' : '#334155';
-        document.getElementById('payFormBtn').disabled = formPaid;
-        if(formPaid) document.getElementById('payFormBtn').classList.add('opacity-50', 'cursor-not-allowed');
-        
-        const acceptancePaid = currentUserData.acceptanceFeePaid === true;
-        document.getElementById('acceptanceFeeStatus').innerText = acceptancePaid ? 'PAID' : 'UNPAID';
-        document.getElementById('acceptanceFeeStatus').className = acceptancePaid ? 'text-xs text-green-400' : 'text-xs text-red-400';
-        document.getElementById('acceptanceFeeCard').style.borderColor = acceptancePaid ? '#22c55e' : '#334155';
-        document.getElementById('payAcceptanceBtn').disabled = acceptancePaid;
-        if(acceptancePaid) document.getElementById('payAcceptanceBtn').classList.add('opacity-50', 'cursor-not-allowed');
-        
-        const fullPaid = currentUserData.fullPayment === true;
-        if(fullPaid) {
-            document.getElementById('fullPaymentStatus').innerText = 'FULLY PAID';
-            document.getElementById('fullPaymentStatus').className = 'text-xs text-green-400';
-            document.getElementById('fullPaymentCard').style.borderColor = '#22c55e';
-            document.getElementById('payFullBtn').disabled = true;
-            document.getElementById('payFullBtn').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('payTuitionBtn').disabled = true;
-            document.getElementById('payTuitionBtn').classList.add('opacity-50', 'cursor-not-allowed');
-        }
-        
-        await updateTuitionStatus();
+    if(!currentUserData) return;
+    
+    const formPaid = currentUserData.formFeePaid === true;
+    const acceptancePaid = currentUserData.acceptanceFeePaid === true;
+    const tuitionHasPayment = currentUserData.lastTuitionPaidDate !== null;
+    const hasAnyPayment = formPaid || acceptancePaid || tuitionHasPayment || currentUserData.fullPayment === true;
+    
+    // FORM FEE - Hide completely if paid (ONE-TIME)
+    const formCard = document.getElementById('formFeeCard');
+    const formBtn = document.getElementById('payFormBtn');
+    if (formPaid) {
+        formCard.style.display = 'none';
+        formBtn.style.display = 'none';
+    } else {
+        formCard.style.display = 'block';
+        formBtn.style.display = 'inline-block';
+        document.getElementById('formFeeStatus').innerText = 'UNPAID';
+        document.getElementById('formFeeStatus').className = 'text-xs text-red-400';
+        document.getElementById('formFeeCard').style.borderColor = '#334155';
+        formBtn.disabled = false;
+        formBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
+    
+    // ACCEPTANCE FEE - Hide completely if paid (ONE-TIME)
+    const acceptanceCard = document.getElementById('acceptanceFeeCard');
+    const acceptanceBtn = document.getElementById('payAcceptanceBtn');
+    if (acceptancePaid) {
+        acceptanceCard.style.display = 'none';
+        acceptanceBtn.style.display = 'none';
+    } else {
+        acceptanceCard.style.display = 'block';
+        acceptanceBtn.style.display = 'inline-block';
+        document.getElementById('acceptanceFeeStatus').innerText = 'UNPAID';
+        document.getElementById('acceptanceFeeStatus').className = 'text-xs text-red-400';
+        document.getElementById('acceptanceFeeCard').style.borderColor = '#334155';
+        acceptanceBtn.disabled = false;
+        acceptanceBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    
+    // PAY ALL BUTTON - Hide if ANY payment has been made (partial or full)
+    const payAllBtn = document.getElementById('payFullBtn');
+    if (hasAnyPayment) {
+        payAllBtn.style.display = 'none';
+        document.getElementById('fullPaymentCard').style.borderColor = '#22c55e';
+        document.getElementById('fullPaymentStatus').innerText = 'PARTIAL PAID';
+        document.getElementById('fullPaymentStatus').className = 'text-xs text-blue-400';
+    } else {
+        payAllBtn.style.display = 'inline-block';
+        document.getElementById('fullPaymentStatus').innerText = 'BUNDLE';
+        document.getElementById('fullPaymentStatus').className = 'text-xs text-yellow-400';
+        document.getElementById('fullPaymentCard').style.borderColor = '#8b5cf6';
+    }
+    
+    // TUITION FEE - Monthly recurring (always shows)
+    await updateTuitionStatus();
+}
 
     async function updateTuitionStatus() {
-        if(!currentUserData) return;
-        
-        const fullPaid = currentUserData.fullPayment === true;
-        const accountCreatedAt = currentUserData.createdAt?.toDate() || new Date();
-        const lastTuitionPaid = currentUserData.lastTuitionPaidDate?.toDate() || null;
-        const tuitionPaidUntil = currentUserData.tuitionPaidUntil?.toDate() || null;
-        const now = new Date();
-        
-        let isTuitionDue = false;
-        let daysOverdue = 0;
-        let nextDueDate = null;
-        
-        if(!fullPaid) {
-            if(!lastTuitionPaid) {
-                const daysSinceCreation = Math.floor((now - accountCreatedAt) / (1000 * 60 * 60 * 24));
-                if(daysSinceCreation >= 30) {
-                    isTuitionDue = true;
-                    daysOverdue = daysSinceCreation - 30;
-                    nextDueDate = new Date(accountCreatedAt);
-                    nextDueDate.setDate(accountCreatedAt.getDate() + 30);
-                } else {
-                    nextDueDate = new Date(accountCreatedAt);
-                    nextDueDate.setDate(accountCreatedAt.getDate() + 30);
-                }
-            } else {
-                if(tuitionPaidUntil && tuitionPaidUntil < now) {
-                    isTuitionDue = true;
-                    daysOverdue = Math.floor((now - tuitionPaidUntil) / (1000 * 60 * 60 * 24));
-                    nextDueDate = new Date(tuitionPaidUntil);
-                } else if(tuitionPaidUntil) {
-                    nextDueDate = new Date(tuitionPaidUntil);
-                } else {
-                    nextDueDate = new Date(lastTuitionPaid);
-                    nextDueDate.setDate(lastTuitionPaid.getDate() + 30);
-                    if(nextDueDate < now) isTuitionDue = true;
-                }
-            }
-        }
-        
-        const tuitionCard = document.getElementById('tuitionFeeCard');
-        const tuitionStatusSpan = document.getElementById('tuitionFeeStatus');
-        const tuitionDueSpan = document.getElementById('tuitionDueDate');
-        const tuitionRecurringInfo = document.getElementById('tuitionRecurringInfo');
-        
-        if(fullPaid) {
-            tuitionStatusSpan.innerText = 'COVERED';
-            tuitionStatusSpan.className = 'text-xs text-green-400';
-            tuitionCard.style.borderColor = '#22c55e';
-            tuitionDueSpan.classList.add('hidden');
-            tuitionRecurringInfo.classList.add('hidden');
-        } else if(isTuitionDue) {
-            tuitionStatusSpan.innerText = `DUE (${daysOverdue} days overdue)`;
-            tuitionStatusSpan.className = 'text-xs text-red-400 font-bold';
-            tuitionCard.style.borderColor = '#ef4444';
-            tuitionDueSpan.innerHTML = `<span class="text-red-400">⚠️ Payment required now!</span>`;
-            tuitionDueSpan.classList.remove('hidden');
-            tuitionRecurringInfo.classList.remove('hidden');
-            tuitionRecurringInfo.innerHTML = `<span class="text-red-400">⚠️ Tuition fee of N1,000 is due! Please pay within 5 days to avoid suspension.</span>`;
-            
-            if(daysOverdue === 1 || daysOverdue === 3 || daysOverdue === 5) {
-                await sendTuitionWarningMessage(daysOverdue);
-            }
-            
-            if(daysOverdue >= 5 && !currentUserData.suspended) {
-                await db.collection('users').doc(auth.currentUser.uid).update({ suspended: true });
-                currentUserData.suspended = true;
-                alert("Your account has been suspended due to unpaid tuition fees. Contact admin.");
-            }
+    if(!currentUserData) return;
+    
+    // Tuition fee ALWAYS shows - it's monthly recurring
+    const accountCreatedAt = currentUserData.createdAt?.toDate() || new Date();
+    const lastTuitionPaid = currentUserData.lastTuitionPaidDate?.toDate() || null;
+    const tuitionPaidUntil = currentUserData.tuitionPaidUntil?.toDate() || null;
+    const now = new Date();
+    
+    let isTuitionDue = false;
+    let daysOverdue = 0;
+    let nextDueDate = null;
+    
+    if(!lastTuitionPaid) {
+        const daysSinceCreation = Math.floor((now - accountCreatedAt) / (1000 * 60 * 60 * 24));
+        if(daysSinceCreation >= 30) {
+            isTuitionDue = true;
+            daysOverdue = daysSinceCreation - 30;
+            nextDueDate = new Date(accountCreatedAt);
+            nextDueDate.setDate(accountCreatedAt.getDate() + 30);
         } else {
-            tuitionStatusSpan.innerText = 'ACTIVE';
-            tuitionStatusSpan.className = 'text-xs text-green-400';
-            tuitionCard.style.borderColor = '#22c55e';
-            if(nextDueDate) {
-                const daysLeft = Math.ceil((nextDueDate - now) / (1000 * 60 * 60 * 24));
-                tuitionDueSpan.innerHTML = `Next due: ${nextDueDate.toLocaleDateString()} (${daysLeft} days left)`;
-                tuitionDueSpan.classList.remove('hidden');
-            }
-            tuitionRecurringInfo.classList.remove('hidden');
-            tuitionRecurringInfo.innerHTML = `Tuition fee recurs every 30 days. Next payment due on ${nextDueDate?.toLocaleDateString() || 'N/A'}`;
+            nextDueDate = new Date(accountCreatedAt);
+            nextDueDate.setDate(accountCreatedAt.getDate() + 30);
         }
-        
-        const payTuitionBtn = document.getElementById('payTuitionBtn');
-        if(fullPaid) {
-            payTuitionBtn.disabled = true;
-            payTuitionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        if(tuitionPaidUntil && tuitionPaidUntil < now) {
+            isTuitionDue = true;
+            daysOverdue = Math.floor((now - tuitionPaidUntil) / (1000 * 60 * 60 * 24));
+            nextDueDate = new Date(tuitionPaidUntil);
+        } else if(tuitionPaidUntil) {
+            nextDueDate = new Date(tuitionPaidUntil);
         } else {
-            payTuitionBtn.disabled = false;
-            payTuitionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            if(isTuitionDue) {
-                payTuitionBtn.classList.add('bg-red-600', 'animate-pulse');
-            } else {
-                payTuitionBtn.classList.remove('bg-red-600', 'animate-pulse');
-            }
+            nextDueDate = new Date(lastTuitionPaid);
+            nextDueDate.setDate(lastTuitionPaid.getDate() + 30);
+            if(nextDueDate < now) isTuitionDue = true;
         }
     }
+    
+    const tuitionCard = document.getElementById('tuitionFeeCard');
+    const tuitionStatusSpan = document.getElementById('tuitionFeeStatus');
+    const tuitionDueSpan = document.getElementById('tuitionDueDate');
+    const tuitionRecurringInfo = document.getElementById('tuitionRecurringInfo');
+    const payTuitionBtn = document.getElementById('payTuitionBtn');
+    
+    // Tuition card always visible
+    tuitionCard.style.display = 'block';
+    
+    if(isTuitionDue) {
+        tuitionStatusSpan.innerText = `DUE (${daysOverdue} days overdue)`;
+        tuitionStatusSpan.className = 'text-xs text-red-400 font-bold';
+        tuitionCard.style.borderColor = '#ef4444';
+        tuitionDueSpan.innerHTML = `<span class="text-red-400">⚠️ Payment required now!</span>`;
+        tuitionDueSpan.classList.remove('hidden');
+        tuitionRecurringInfo.classList.remove('hidden');
+        tuitionRecurringInfo.innerHTML = `<span class="text-red-400">⚠️ Tuition fee of N1,000 is due! Please pay within 5 days to avoid suspension.</span>`;
+        payTuitionBtn.disabled = false;
+        payTuitionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        payTuitionBtn.classList.add('bg-red-600', 'animate-pulse');
+        payTuitionBtn.style.display = 'inline-block';
+        
+        if(daysOverdue === 1 || daysOverdue === 3 || daysOverdue === 5) {
+            await sendTuitionWarningMessage(daysOverdue);
+        }
+        
+        if(daysOverdue >= 5 && !currentUserData.suspended) {
+            await db.collection('users').doc(auth.currentUser.uid).update({ suspended: true });
+            currentUserData.suspended = true;
+            alert("Your account has been suspended due to unpaid tuition fees. Contact admin.");
+        }
+    } else {
+        tuitionStatusSpan.innerText = 'ACTIVE';
+        tuitionStatusSpan.className = 'text-xs text-green-400';
+        tuitionCard.style.borderColor = '#22c55e';
+        if(nextDueDate) {
+            const daysLeft = Math.ceil((nextDueDate - now) / (1000 * 60 * 60 * 24));
+            tuitionDueSpan.innerHTML = `Next due: ${nextDueDate.toLocaleDateString()} (${daysLeft} days left)`;
+            tuitionDueSpan.classList.remove('hidden');
+        }
+        tuitionRecurringInfo.classList.remove('hidden');
+        tuitionRecurringInfo.innerHTML = `Tuition fee recurs every 30 days. Next payment due on ${nextDueDate?.toLocaleDateString() || 'N/A'}`;
+        payTuitionBtn.disabled = false;
+        payTuitionBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-red-600', 'animate-pulse');
+        payTuitionBtn.style.display = 'inline-block';
+    }
+}
 async function checkAndPromptOldUsers() {
     if (!currentUserData) return;
     
@@ -1963,6 +1979,13 @@ function updateRegisterButtonState() {
 async function checkForPaidReferrals() {
     if (!currentUserData || !auth.currentUser) return;
     
+    // Check if we already showed popup in this session
+    const sessionKey = `referral_popup_shown_${auth.currentUser.uid}`;
+    if (sessionStorage.getItem(sessionKey) === 'true') {
+        console.log("Popup already shown this session, skipping");
+        return;
+    }
+    
     // Get all people this user referred
     const referralsSnapshot = await db.collection('users')
         .where('referredBy', '==', auth.currentUser.uid)
@@ -1975,7 +1998,7 @@ async function checkForPaidReferrals() {
         const referralData = doc.data();
         const referralId = doc.id;
         
-        // Check if already claimed
+        // Check if already claimed in localStorage
         const claimedKey = `paid_referral_claimed_${referralId}`;
         const alreadyClaimed = localStorage.getItem(claimedKey);
         
@@ -1996,11 +2019,12 @@ async function checkForPaidReferrals() {
     }
     
     if (newReferrals.length > 0) {
+        // Mark session as shown
+        sessionStorage.setItem(sessionKey, 'true');
         // Show popup to claim rewards
         showReferralClaimPopup(newReferrals, totalNewCoins);
     }
 }
-
 function showReferralClaimPopup(referrals, totalCoins) {
     let referralNames = '';
     referrals.forEach(ref => {
@@ -2058,13 +2082,30 @@ async function claimPaidReferralRewards() {
             return;
         }
         
+        // Check if already claimed (double-check to prevent double claiming)
+        let alreadyClaimedAny = false;
+        for (const id of referralIds) {
+            if (localStorage.getItem(`paid_referral_claimed_${id}`) === 'true') {
+                alreadyClaimedAny = true;
+                break;
+            }
+        }
+        
+        if (alreadyClaimedAny) {
+            alert("These rewards have already been claimed!");
+            closeReferralClaimPopup();
+            delete window.pendingReferralIds;
+            delete window.pendingTotalCoins;
+            return;
+        }
+        
         // Add coins to user
         await db.collection('users').doc(auth.currentUser.uid).update({
             coins: firebase.firestore.FieldValue.increment(totalCoins),
             referralsCount: firebase.firestore.FieldValue.increment(referralIds.length)
         });
         
-        // Mark each referral as claimed
+        // Mark each referral as claimed (permanent, never shows again for this referral)
         for (const id of referralIds) {
             localStorage.setItem(`paid_referral_claimed_${id}`, 'true');
         }
