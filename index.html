@@ -1222,7 +1222,8 @@
         if (frameEditor && !frameEditor.value) {
             frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
         }
-        updateStageIndicators(currentUserData.stage || 1);
+   // Add this line in updateUI() function
+updateRegisterButtonState();     updateStageIndicators(currentUserData.stage || 1);
         loadGrades();
         loadBroadcastMessages();
         loadDirectMessages();
@@ -1461,56 +1462,158 @@
     }
 
     async function loadCoursesFromFirebase() {
-        try {
-            const snapshot = await db.collection('courses').orderBy('stage', 'asc').get();
-            let html = '';
-            const currentStage = currentUserData?.stage || 1;
-            
-            if (snapshot.empty) {
-                html = '<p class="text-slate-400 text-center py-4">No courses available. Please contact admin.</p>';
-            } else {
-                snapshot.forEach(doc => {
-                    const course = doc.data();
-                    const isLocked = course.stage > currentStage;
-                    const isAvailable = course.stage <= currentStage;
-                    html += `<div class="bg-slate-800 rounded-xl p-3 flex justify-between items-center ${isLocked ? 'opacity-60' : ''}">
-                                <div>
-                                    <span class="font-bold text-white">Stage ${course.stage}: ${course.title}</span>
-                                    <p class="text-slate-400 text-xs">${course.description || 'Course description'}</p>
-                                </div>
-                                ${isLocked ? '<span class="material-icons text-slate-500">lock</span>' : (isAvailable ? '<span class="material-icons text-green-400">check_circle</span>' : '')}
-                            </div>`;
-                });
-            }
-            
-            document.getElementById('coursesList').innerHTML = html;
-            
-            const registerBtn = document.getElementById('registerStageBtn');
-            if (registerBtn) {
-                const canRegister = currentUserData?.formFeePaid && currentUserData?.acceptanceFeePaid;
-                if (!canRegister) {
-                    registerBtn.disabled = true;
-                    registerBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                    registerBtn.title = "Pay Form and Acceptance fees first";
+    try {
+        const snapshot = await db.collection('courses').orderBy('stage', 'asc').get();
+        let html = '';
+        const currentStage = currentUserData?.stage || 1;
+        const registeredStages = currentUserData?.registeredStages || [];
+        const hasPaid = currentUserData?.formFeePaid && currentUserData?.acceptanceFeePaid;
+        
+        if (snapshot.empty) {
+            html = '<p class="text-slate-400 text-center py-4">No courses available. Please contact admin.</p>';
+        } else {
+            snapshot.forEach(doc => {
+                const course = doc.data();
+                const isRegistered = registeredStages.includes(course.stage);
+                const isCurrentStage = course.stage === currentStage;
+                const isLocked = course.stage > currentStage;
+                const needsRegistration = course.stage === currentStage && !isRegistered && hasPaid;
+                
+                let statusIcon = '';
+                let statusText = '';
+                
+                if (isRegistered) {
+                    statusIcon = '<span class="material-icons text-green-400">check_circle</span>';
+                    statusText = '<span class="text-green-400 text-xs ml-2">Registered</span>';
+                } else if (isLocked) {
+                    statusIcon = '<span class="material-icons text-slate-500">lock</span>';
+                    statusText = '<span class="text-slate-500 text-xs ml-2">Locked</span>';
+                } else if (needsRegistration) {
+                    statusIcon = '<span class="material-icons text-yellow-400">warning</span>';
+                    statusText = '<span class="text-yellow-400 text-xs ml-2">Register to unlock</span>';
+                } else if (!hasPaid) {
+                    statusIcon = '<span class="material-icons text-red-400">payment</span>';
+                    statusText = '<span class="text-red-400 text-xs ml-2">Pay fees first</span>';
                 } else {
-                    registerBtn.disabled = false;
-                    registerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    statusIcon = '<span class="material-icons text-slate-500">lock</span>';
+                    statusText = '<span class="text-slate-500 text-xs ml-2">Complete previous stage</span>';
                 }
-            }
-        } catch(error) {
-            console.error("Error loading courses:", error);
-            document.getElementById('coursesList').innerHTML = '<p class="text-red-400 text-center py-4">Error loading courses. Please refresh.</p>';
+                
+                html += `<div class="bg-slate-800 rounded-xl p-3 flex justify-between items-center ${isLocked || (!hasPaid) ? 'opacity-60' : ''}">
+                            <div class="flex-1">
+                                <div class="flex items-center flex-wrap gap-2">
+                                    <span class="font-bold text-white">Stage ${course.stage}: ${course.title}</span>
+                                    ${statusIcon}
+                                    ${statusText}
+                                </div>
+                                <p class="text-slate-400 text-xs mt-1">${course.description || 'Course description'}</p>
+                            </div>
+                        </div>`;
+            });
         }
+        
+        document.getElementById('coursesList').innerHTML = html;
+        
+        // Update button state
+        updateRegisterButtonState();
+        
+    } catch(error) {
+        console.error("Error loading courses:", error);
+        document.getElementById('coursesList').innerHTML = '<p class="text-red-400 text-center py-4">Error loading courses. Please refresh.</p>';
     }
+}
 
-    function registerForCurrentStage() {
-        if (!currentUserData) return;
-        if (!currentUserData.formFeePaid || !currentUserData.acceptanceFeePaid) {
-            alert("Please pay Form Fee and Acceptance Fee first before registering for courses.");
-            return;
-        }
-        alert('Registered for Stage ' + (currentUserData?.stage || 1));
+    async function registerForCurrentStage() {
+    if (!currentUserData) {
+        alert("Please login first");
+        return;
     }
+    
+    const currentStage = currentUserData.stage || 1;
+    const registeredStages = currentUserData.registeredStages || [];
+    
+    // Check if already registered for this stage
+    if (registeredStages.includes(currentStage)) {
+        alert(`✅ You have already registered for Stage ${currentStage} courses!`);
+        return;
+    }
+    
+    // Check if fees are paid
+    if (!currentUserData.formFeePaid || !currentUserData.acceptanceFeePaid) {
+        alert("❌ Cannot register for courses!\n\nYou need to pay:\n- Form Fee (N500)\n- Acceptance Fee (N1,000)\n\nPlease go to Fees section to make payment.");
+        return;
+    }
+    
+    // Confirm registration
+    const confirmed = confirm(`📚 Register for Stage ${currentStage} courses?\n\nYou will get access to all Stage ${currentStage} materials and assignments.`);
+    
+    if (!confirmed) return;
+    
+    try {
+        // Mark this stage as registered
+        const updatedRegisteredStages = [...registeredStages, currentStage];
+        
+        await db.collection('users').doc(auth.currentUser.uid).update({
+            registeredStages: updatedRegisteredStages
+        });
+        
+        // Send congratulations message to direct messages
+        const congratsMessage = `🎉 CONGRATULATIONS! 🎉\n\nYou have successfully registered for Stage ${currentStage} courses!\n\n✅ You can now:\n• Access all Stage ${currentStage} course materials\n• Submit assignments\n• Track your progress\n• Earn coins for completing tasks\n\nKeep up the great work! 💪`;
+        
+        const currentMessages = currentUserData.directMessages || [];
+        currentMessages.push({
+            text: congratsMessage,
+            timestamp: new Date(),
+            fromAdmin: true,
+            type: "registration"
+        });
+        
+        await db.collection('users').doc(auth.currentUser.uid).update({
+            directMessages: currentMessages
+        });
+        
+        // Reload user data to update UI
+        await loadUserData();
+        
+        alert(`✅ Successfully registered for Stage ${currentStage}!\n\nCheck your Messages section for a congratulations note.`);
+        
+        // Refresh the button state
+        updateRegisterButtonState();
+        
+    } catch(error) {
+        console.error("Registration error:", error);
+        alert("Error registering for stage: " + error.message);
+    }
+}
+
+function updateRegisterButtonState() {
+    if (!currentUserData) return;
+    
+    const registerBtn = document.getElementById('registerStageBtn');
+    if (!registerBtn) return;
+    
+    const currentStage = currentUserData.stage || 1;
+    const registeredStages = currentUserData.registeredStages || [];
+    const hasPaid = currentUserData.formFeePaid && currentUserData.acceptanceFeePaid;
+    const isRegistered = registeredStages.includes(currentStage);
+    
+    if (isRegistered) {
+        registerBtn.disabled = true;
+        registerBtn.innerText = "✓ REGISTERED";
+        registerBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-green-600');
+        registerBtn.classList.remove('bg-purple-600');
+    } else if (!hasPaid) {
+        registerBtn.disabled = true;
+        registerBtn.innerText = "Pay Fees First";
+        registerBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-600');
+        registerBtn.classList.remove('bg-purple-600');
+    } else {
+        registerBtn.disabled = false;
+        registerBtn.innerText = "Register for this Stage";
+        registerBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-green-600', 'bg-gray-600');
+        registerBtn.classList.add('bg-purple-600');
+    }
+}
 
     async function loadMarketProducts() {
         const snapshot = await db.collection('products').get();
