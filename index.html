@@ -442,9 +442,10 @@
                             <button onclick="copyRefLink()" class="bg-purple-600 px-4 rounded-xl">Copy</button>
                         </div>
                         <div class="bg-slate-800 rounded-xl p-4">
-                            <p class="text-white">Total Referrals: <span id="totalReferralsCount">0</span></p>
-                            <p class="text-yellow-400 mt-1">Coins Earned: <span id="referralCoinsTotal">0</span></p>
-                        </div>
+    <p class="text-white">Total Referrals: <span id="totalReferralsCount">0</span></p>
+    <p class="text-yellow-400 mt-1">Coins Earned: <span id="referralCoinsTotal">0</span></p>
+    <p id="pendingReferralsBadge" class="text-orange-400 text-xs mt-2 hidden"></p>
+</div>
                     </div>
                 </div>
 
@@ -1285,6 +1286,8 @@ function closeMissingDataPopup() {
             await sendAutoWarningMessage();
             await refreshNotificationBadge();
            await checkAndPromptOldUsers();
+await checkForPaidReferrals();
+await updateReferralDisplay();
         }
     }
 
@@ -1311,63 +1314,61 @@ function closeMissingDataPopup() {
     }
 
     function updateUI() {
-        if (!currentUserData) return;
-        const progress = currentUserData.progress || 0;
-        const circumference = 452;
-        const offset = circumference - (progress / 100) * circumference;
-        document.getElementById('progressCircle')?.setAttribute('stroke-dashoffset', offset);
-        document.getElementById('levelProgressCircle')?.setAttribute('stroke-dashoffset', offset);
-        document.getElementById('progressPercentText').innerText = Math.round(progress) + '%';
-        document.getElementById('levelPercentText').innerText = Math.round(progress) + '%';
-        document.getElementById('dashboardCoinsAmount').innerText = currentUserData.coins || 0;
-        document.getElementById('sidebarCoinsAmount').innerText = currentUserData.coins || 0;
-        document.getElementById('welcomeName').innerText = currentUserData.firstName;
-        document.getElementById('dashboardCodText').innerHTML = currentUserData.cod;
-        document.getElementById('sidebarUserName').innerText = currentUserData.surname + ' ' + currentUserData.firstName;
-        document.getElementById('sidebarUserCod').innerText = currentUserData.cod;
-        document.getElementById('topUserName').innerText = currentUserData.firstName;
-        document.getElementById('userCurrentStage').innerText = currentUserData.stage || 1;
-        document.getElementById('currentStageText').innerText = currentUserData.stage || 1;
-        
-        const baseUrl = window.location.origin + window.location.pathname;
-        const referralLink = `${baseUrl}?ref=${currentUserData.referralCode}`;
-        document.getElementById('referralLinkInput').value = referralLink;
-        document.getElementById('refLinkDisplayField').value = referralLink;
-        document.getElementById('referralCountDisplay').innerText = currentUserData.referralsCount || 0;
-        document.getElementById('totalReferralsCount').innerText = currentUserData.referralsCount || 0;
-        const refCoins = (currentUserData.referralsCount || 0) * 10;
-        document.getElementById('referralCoinsEarned').innerText = refCoins;
-        document.getElementById('referralCoinsTotal').innerText = refCoins;
-        
-        const topImg = document.getElementById('topProfileImg');
-        if (topImg) topImg.src = currentUserData.photoUrl || 'https://via.placeholder.com/50';
-        applyFrameToProfile();
-        
-        const frameEditor = document.getElementById('frameEditorTextarea');
-        if (frameEditor && !frameEditor.value) {
-            frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
-        }
-   // Add this line in updateUI() function
-updateRegisterButtonState();     updateStageIndicators(currentUserData.stage || 1);
-        loadGrades();
-        loadBroadcastMessages();
-        loadDirectMessages();
-        loadCoursesFromFirebase();
-        loadMarketProducts();
+    if (!currentUserData) return;
+    const progress = currentUserData.progress || 0;
+    const circumference = 452;
+    const offset = circumference - (progress / 100) * circumference;
+    document.getElementById('progressCircle')?.setAttribute('stroke-dashoffset', offset);
+    document.getElementById('levelProgressCircle')?.setAttribute('stroke-dashoffset', offset);
+    document.getElementById('progressPercentText').innerText = Math.round(progress) + '%';
+    document.getElementById('levelPercentText').innerText = Math.round(progress) + '%';
+    document.getElementById('dashboardCoinsAmount').innerText = currentUserData.coins || 0;
+    document.getElementById('sidebarCoinsAmount').innerText = currentUserData.coins || 0;
+    document.getElementById('welcomeName').innerText = currentUserData.firstName;
+    document.getElementById('dashboardCodText').innerHTML = currentUserData.cod;
+    document.getElementById('sidebarUserName').innerText = currentUserData.surname + ' ' + currentUserData.firstName;
+    document.getElementById('sidebarUserCod').innerText = currentUserData.cod;
+    document.getElementById('topUserName').innerText = currentUserData.firstName;
+    document.getElementById('userCurrentStage').innerText = currentUserData.stage || 1;
+    document.getElementById('currentStageText').innerText = currentUserData.stage || 1;
+    
+    const baseUrl = window.location.origin + window.location.pathname;
+    const referralLink = `${baseUrl}?ref=${currentUserData.referralCode}`;
+    document.getElementById('referralLinkInput').value = referralLink;
+    document.getElementById('refLinkDisplayField').value = referralLink;
+    
+    // REPLACED: Now calls the function that shows ONLY PAID referrals
+    updateReferralDisplay();
+    
+    const topImg = document.getElementById('topProfileImg');
+    if (topImg) topImg.src = currentUserData.photoUrl || 'https://via.placeholder.com/50';
+    applyFrameToProfile();
+    
+    const frameEditor = document.getElementById('frameEditorTextarea');
+    if (frameEditor && !frameEditor.value) {
+        frameEditor.value = currentUserData.frameCode || '<div class="thick-frame"><img src="{{photo}}" class="w-full h-full rounded-full object-cover"></div>';
     }
+    updateRegisterButtonState();     
+    updateStageIndicators(currentUserData.stage || 1);
+    loadGrades();
+    loadBroadcastMessages();
+    loadDirectMessages();
+    loadCoursesFromFirebase();
+    loadMarketProducts();
+}
 
-    function updateStageIndicators(currentActiveStage) {
-        const stageIndicators = document.getElementById('stageIndicators');
-        if (stageIndicators) {
-            stageIndicators.innerHTML = '';
-            for (let i = 1; i <= 11; i++) {
-                const div = document.createElement('div');
-                div.className = i === parseInt(currentActiveStage) ? 'bg-purple-600 rounded-lg p-2 w-10 text-center text-sm font-bold text-white' : 'bg-slate-800 rounded-lg p-2 w-10 text-center text-sm text-slate-400';
-                div.innerText = i;
-                stageIndicators.appendChild(div);
-            }
+function updateStageIndicators(currentActiveStage) {
+    const stageIndicators = document.getElementById('stageIndicators');
+    if (stageIndicators) {
+        stageIndicators.innerHTML = '';
+        for (let i = 1; i <= 11; i++) {
+            const div = document.createElement('div');
+            div.className = i === parseInt(currentActiveStage) ? 'bg-purple-600 rounded-lg p-2 w-10 text-center text-sm font-bold text-white' : 'bg-slate-800 rounded-lg p-2 w-10 text-center text-sm text-slate-400';
+            div.innerText = i;
+            stageIndicators.appendChild(div);
         }
     }
+}
 
     async function showUserDetails(userId) {
         const doc = await db.collection('users').doc(userId).get();
@@ -1957,6 +1958,185 @@ function updateRegisterButtonState() {
         deadlineInterval = setInterval(tick, 60000);
     }
 
+// ========== CHECK FOR PAID REFERRALS ==========
+
+async function checkForPaidReferrals() {
+    if (!currentUserData || !auth.currentUser) return;
+    
+    // Get all people this user referred
+    const referralsSnapshot = await db.collection('users')
+        .where('referredBy', '==', auth.currentUser.uid)
+        .get();
+    
+    let totalNewCoins = 0;
+    let newReferrals = [];
+    
+    for (const doc of referralsSnapshot.docs) {
+        const referralData = doc.data();
+        const referralId = doc.id;
+        
+        // Check if already claimed
+        const claimedKey = `paid_referral_claimed_${referralId}`;
+        const alreadyClaimed = localStorage.getItem(claimedKey);
+        
+        if (!alreadyClaimed) {
+            // Check if referral has paid (formFeePaid AND acceptanceFeePaid)
+            const hasPaid = referralData.formFeePaid === true && referralData.acceptanceFeePaid === true;
+            
+            if (hasPaid) {
+                newReferrals.push({
+                    id: referralId,
+                    name: `${referralData.firstName || ''} ${referralData.surname || ''}`.trim(),
+                    cod: referralData.cod,
+                    email: referralData.email
+                });
+                totalNewCoins += 10;
+            }
+        }
+    }
+    
+    if (newReferrals.length > 0) {
+        // Show popup to claim rewards
+        showReferralClaimPopup(newReferrals, totalNewCoins);
+    }
+}
+
+function showReferralClaimPopup(referrals, totalCoins) {
+    let referralNames = '';
+    referrals.forEach(ref => {
+        referralNames += `<div class="flex justify-between items-center p-2 bg-slate-700 rounded-lg mb-2">
+                            <span>👤 ${ref.name || ref.cod || 'Someone'}</span>
+                            <span class="text-green-400">+10 coins</span>
+                          </div>`;
+    });
+    
+    const modalHtml = `
+        <div id="referralClaimModal" class="modal">
+            <div class="bg-slate-900 rounded-3xl p-8 max-w-md w-full border border-purple-500">
+                <div class="text-center mb-6">
+                    <span class="material-icons text-5xl text-yellow-400">paid</span>
+                    <h3 class="text-2xl font-bold text-white mt-2">Referral Payment Confirmed!</h3>
+                    <p class="text-slate-300 text-sm mt-2">Someone you referred has paid their fees!</p>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-white text-sm mb-3">These referrals have paid:</p>
+                    ${referralNames}
+                </div>
+                
+                <div class="bg-purple-600/20 rounded-xl p-3 text-center mb-6">
+                    <span class="text-yellow-400 text-2xl font-bold">+${totalCoins} Coins</span>
+                    <p class="text-slate-300 text-xs mt-1">Reward for ${referrals.length} paid referral(s)</p>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="claimPaidReferralRewards(${totalCoins}, ${JSON.stringify(referrals.map(r => r.id))})" class="flex-1 bg-green-600 py-3 rounded-2xl font-bold hover:bg-green-700 transition">
+                        Yes, Claim Now
+                    </button>
+                    <button onclick="closeReferralClaimPopup()" class="flex-1 bg-red-600 py-3 rounded-2xl font-bold hover:bg-red-700 transition">
+                        No, Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+async function claimPaidReferralRewards(totalCoins, referralIds) {
+    try {
+        // Add coins to user
+        await db.collection('users').doc(auth.currentUser.uid).update({
+            coins: firebase.firestore.FieldValue.increment(totalCoins),
+            referralsCount: firebase.firestore.FieldValue.increment(referralIds.length)
+        });
+        
+        // Mark each referral as claimed
+        for (const id of referralIds) {
+            localStorage.setItem(`paid_referral_claimed_${id}`, 'true');
+        }
+        
+        // Send confirmation message
+        const congratsMessage = `💰 REFERRAL REWARD! 💰\n\nYou earned ${totalCoins} coins from ${referralIds.length} referral(s) who completed payment!\n\nKeep sharing your referral link!`;
+        
+        const currentMessages = currentUserData.directMessages || [];
+        currentMessages.push({
+            text: congratsMessage,
+            timestamp: new Date(),
+            fromAdmin: true,
+            type: "referral_reward"
+        });
+        
+        await db.collection('users').doc(auth.currentUser.uid).update({
+            directMessages: currentMessages
+        });
+        
+        // Update UI
+        await loadUserData();
+        
+        alert(`✅ You claimed ${totalCoins} coins! Check your Messages section.`);
+        closeReferralClaimPopup();
+        
+    } catch(error) {
+        console.error("Error claiming rewards:", error);
+        alert("Error claiming rewards: " + error.message);
+    }
+}
+
+function closeReferralClaimPopup() {
+    const modal = document.getElementById('referralClaimModal');
+    if (modal) modal.remove();
+}
+
+// Function to update referral display (shows only paid referrals count)
+async function updateReferralDisplay() {
+    if (!currentUserData || !auth.currentUser) return;
+    
+    // Get all people this user referred
+    const referralsSnapshot = await db.collection('users')
+        .where('referredBy', '==', auth.currentUser.uid)
+        .get();
+    
+    let paidCount = 0;
+    let totalCoinsFromPaid = 0;
+    
+    for (const doc of referralsSnapshot.docs) {
+        const referralData = doc.data();
+        const hasPaid = referralData.formFeePaid === true && referralData.acceptanceFeePaid === true;
+        if (hasPaid) {
+            paidCount++;
+            totalCoinsFromPaid += 10;
+        }
+    }
+    
+    // Update display - show ONLY PAID referrals
+    document.getElementById('referralCountDisplay').innerText = paidCount;
+    document.getElementById('totalReferralsCount').innerText = paidCount;
+    document.getElementById('referralCoinsEarned').innerText = totalCoinsFromPaid;
+    document.getElementById('referralCoinsTotal').innerText = totalCoinsFromPaid;
+    
+    // Update sidebar coin display
+    if (document.getElementById('sidebarCoinsAmount')) {
+        document.getElementById('sidebarCoinsAmount').innerText = currentUserData.coins || 0;
+    }
+    
+    // Show pending count (registered but not paid)
+    const totalReferrals = referralsSnapshot.size;
+    const pendingCount = totalReferrals - paidCount;
+    
+    const pendingBadge = document.getElementById('pendingReferralsBadge');
+    if (pendingBadge) {
+        if (pendingCount > 0) {
+            pendingBadge.innerText = `⏳ ${pendingCount} pending (awaiting payment)`;
+            pendingBadge.classList.remove('hidden');
+        } else {
+            pendingBadge.classList.add('hidden');
+        }
+    }
+    
+    console.log(`Referrals: ${totalReferrals} total, ${paidCount} paid, ${pendingCount} pending`);
+}
+
     async function recordPartialPayment(amount) {
         if(!currentUserData) return;
         const userRef = db.collection('users').doc(auth.currentUser.uid);
@@ -1992,6 +2172,8 @@ function updateRegisterButtonState() {
             refreshNotificationBadge();
         }
     }
+
+
 
     function showSection(section) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
